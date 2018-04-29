@@ -6,6 +6,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import router from './router'
 
+import axios from 'axios';
+// axios.defaults.withCredentials=true;//让ajax携带cookie
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
+Vue.prototype.$http = axios;
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI, { size: 'small' })

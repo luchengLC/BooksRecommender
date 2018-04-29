@@ -24,12 +24,15 @@
 
 <template>
   <div id="app">
-    <router-view/>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
 <script>
   export default {
+    urlHeader: 'http://127.0.0.1:8000/bookRecommender/',
     name: 'App'
   }
 </script>
