@@ -14,17 +14,26 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from Recommender.handlers.user import register, logout, login, home
+from Recommender.handlers.user import register, logout, login, home, info
+from Recommender.handlers.book import search
 
 
 urlpatterns = [
-    # 注册
-    url(r'user/register', register.handle_register),
-    # 登录
-    url(r'user/login', login.handle_login),
-    # 保持用户登录状态
-    url(r'user/home', home.handle_check_login),
-    # 退出
-    url(r'user/logout', logout.handle_logout),
+
+    # 用户 user
+    # # 注册
+    # url(r'user/register', register.handle_register),
+    # # 登录
+    # url(r'user/login', login.handle_login),
+    # # 保持用户登录状态
+    # url(r'user/home', home.handle_check_login),
+    # # 退出
+    # url(r'user/logout', logout.handle_logout),
+    # # 用户信息
+    # url(r'user/info', info.handle_logout),
+
+    # 书本
+    url(r'book/search', search.handle_search),
+    # url(r'book/hot', info.handle_logout),
 
 ]
