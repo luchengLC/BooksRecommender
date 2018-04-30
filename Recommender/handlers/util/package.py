@@ -1,16 +1,20 @@
 
+'''包装返回结构的俩方法'''
+
 
 def successPack(data):
-    res = {}
-    res['error_code'] = 0
-    res['msg'] = 'success'
-    res['data'] = data
+    res = {
+        'error_code': 0,
+        'msg': 'success',
+        'data': data
+    }
     return res
 
 
 def errorPack(err):
-    res = {}
-    res['error_code'] = 1
-    res['msg'] = err
+    res = {
+        'error_code': 1,
+        'msg': err
+    }
     return res
 

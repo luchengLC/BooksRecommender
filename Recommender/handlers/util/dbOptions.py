@@ -1,6 +1,7 @@
 import pymysql
 
 
+'''模糊查询 书籍列表'''
 def search(sql, params):
     try:
         db = ''
@@ -12,19 +13,20 @@ def search(sql, params):
         lists = cur.fetchall()
         res = []
         for i in range(len(lists)):
-            temp = {}
-            temp['bookId'] = lists[i][0]
-            temp['bookName'] = lists[i][1]
-            temp['subjectUrl'] = lists[i][2]
-            temp['imgUrl'] = lists[i][3]
-            temp['author'] = lists[i][4]
-            temp['pubDate'] = lists[i][5]
-            temp['publisher'] = lists[i][6]
-            temp['ratingScore'] = lists[i][7]
-            temp['ratingNum'] = lists[i][8]
-            temp['price'] = lists[i][9]
-            temp['ISBN'] = lists[i][10]
-            temp['summery'] = lists[i][11]
+            temp = {
+                'bookId': lists[i][0],
+                'bookName': lists[i][1],
+                'subjectUrl': lists[i][2],
+                'imgUrl': lists[i][3],
+                'author': lists[i][4],
+                'pubDate': lists[i][5],
+                'publisher': lists[i][6],
+                'ratingScore': lists[i][7],
+                'ratingNum': lists[i][8],
+                'price': lists[i][9],
+                'ISBN': lists[i][10],
+                'summery': lists[i][11],
+            }
             res.append(temp)
         return 0, res  # res可能为空，后续处理
     except Exception as e:
@@ -35,6 +37,7 @@ def search(sql, params):
             db.close()  # 关闭连接
 
 
+'''模糊查询 书籍 总页数'''
 def search_count(sql, params):
     try:
         db = ''
@@ -54,3 +57,5 @@ def search_count(sql, params):
     finally:
         if db != '':
             db.close()  # 关闭连接
+
+
