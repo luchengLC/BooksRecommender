@@ -22,15 +22,14 @@ def handle_search(request):
     count = (pageno - 1) * 20  # 用于辅助翻页
     sql = 'SELECT bookId, bookName, subjectUrl, imgUrl, author, pubDate, publisher, ratingScore, ratingNum, price, ISBN, summary '+ search_sql_base + ' LIMIT '+str(count)+',20;'
     lists = []  # 返回的参数列表
-    resultState, lists = dbOptions.search(sql, wd)
+    result_code, lists = dbOptions.search(sql, wd)
 
     # 求页数page_count
     sql_count = 'SELECT COUNT(bookId) ' + search_sql_base
     counts = int(dbOptions.search_count(sql_count, wd))  # 查询到对应的总数
     page_count = math.ceil(counts/20)  # python3:/是精确除，然后向上取整。每页20
 
-
-    if resultState == 0:
+    if result_code == 0:
         data = {
             'page_count': page_count,
             'list': lists

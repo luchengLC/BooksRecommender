@@ -22,9 +22,9 @@ urlpatterns = [
 
     # 用户 user
     # # 注册
-    # url(r'user/register', register.handle_register),
+    url(r'user/register', register.handle_register),
     # # 登录
-    # url(r'user/login', login.handle_login),
+    url(r'user/login', login.handle_login),
     # # 保持用户登录状态
     # url(r'user/home', home.handle_check_login),
     # # 退出
