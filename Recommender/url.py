@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from Recommender.handlers.user import register, logout, login, home, info
 from Recommender.handlers.book import search
+from Recommender.handlers.userAndBook import favor, recommend
 
 
 urlpatterns = [
@@ -26,14 +27,22 @@ urlpatterns = [
     # # 登录
     url(r'user/login', login.handle_login),
     # # 保持用户登录状态
-    # url(r'user/home', home.handle_check_login),
+    # url(r'user/home', home.handle_home),
     # # 退出
-    # url(r'user/logout', logout.handle_logout),
+    url(r'user/logout', logout.handle_logout),
     # # 用户信息
     # url(r'user/info', info.handle_logout),
 
     # 书本
     url(r'book/search', search.handle_search),
     # url(r'book/hot', info.handle_logout),
+
+
+    # 喜爱列表
+    # add
+    url(r'favor/add', favor.handle_favor_add),
+    url(r'favor/query', favor.handle_favor_query),
+    url(r'favor/delete', favor.handle_favor_delete),
+
 
 ]

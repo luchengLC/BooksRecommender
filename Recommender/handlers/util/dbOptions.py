@@ -1,14 +1,15 @@
 import pymysql
 
-
 '''模糊查询 书籍列表'''
+
+
 def search(sql, params):
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
                              charset="utf8")
         cur = db.cursor()  # 获取操作游标
-        cur.execute(sql, params)   # 执行
+        cur.execute(sql, params)  # 执行
         lists = []
         lists = cur.fetchall()
         res = []
@@ -39,13 +40,15 @@ def search(sql, params):
 
 
 '''模糊查询 书籍 总页数'''
+
+
 def search_count(sql, params):
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
                              charset="utf8")
         cur = db.cursor()  # 获取操作游标
-          # 执行
+        # 执行
         res = 0
         cur.execute(sql, params)
         res = cur.fetchone()[0]
@@ -55,19 +58,22 @@ def search_count(sql, params):
         return res  # res是数字
     except Exception as e:
         print("SQL searching_page Erorr ==== ", e)
-        return 0   # 出错就返回0页
+        return 0  # 出错就返回0页
     finally:
         if db != '':
             db.close()  # 关闭连接
 
 
 '''注册'''
+
+
 def register_insert(sql, params):
     try:
         db = ''
-        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306, charset="utf8")
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
         cur = db.cursor()  # 获取操作游标
-        cur.execute(sql, (params['userId'], params['password'], params['nickname'], params['email'])) # 执行
+        cur.execute(sql, (params['userId'], params['password'], params['nickname'], params['email']))  # 执行
         db.commit()
         return 0, params['nickname']
     except Exception as e:
@@ -79,10 +85,13 @@ def register_insert(sql, params):
 
 
 '''登录'''
+
+
 def login_query(sql, param):
     try:
         db = ''
-        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306, charset="utf8")
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
         cur = db.cursor()  # 获取操作游标
         cur.execute(sql, param)  # 执行
         res = cur.fetchall()
@@ -97,6 +106,108 @@ def login_query(sql, param):
     except Exception as e:
         print('register  Erorr ===== ', e)
         return 3, '登录操作错误!'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+'''favor insert'''
+
+
+def favor_insert(sql, params):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, (params['userId'], params['bookId'], params['starNum']))  # 执行
+        db.commit()
+        return 0  # 成功
+    except Exception as e:
+        print('register  Erorr ===== ', e)
+        return 1
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+'''favor delete'''
+
+
+def favor_delete(sql, params):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, (params['userId'], params['bookId']))  # 执行
+        db.commit()
+        return 0  # 成功
+    except Exception as e:
+        print('register  Erorr ===== ', e)
+        return 1
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+'''favor_query'''
+
+
+def favor_query(sql, params):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, params)  # 执行
+        lists = cur.fetchall()  # 取得全部
+
+        # 按评价的星级返回
+        star_1 = []
+        star_2 = []
+        star_3 = []
+        star_4 = []
+        star_5 = []
+        res = {
+            'star_1': star_1,
+            'star_2': star_2,
+            'star_3': star_3,
+            'star_4': star_4,
+            'star_5': star_5,
+        }
+        for i in range(len(lists)):
+            temp = {
+                'bookId': lists[i][1],
+                'starNum': lists[i][2],
+                'bookName': lists[i][3],
+                'subjectUrl': lists[i][4],
+                'imgUrl': lists[i][5],
+                'author': lists[i][6],
+                'pubDate': lists[i][7],
+                'publisher': lists[i][8],
+                'ratingScore': lists[i][9],
+                'ratingNum': lists[i][10],
+                'price': lists[i][11],
+                'ISBN': lists[i][12],
+                'summery': lists[i][13],
+            }
+            if lists[i][2] == 1:
+                star_1.append(temp)
+            elif lists[i][2] == 2:
+                star_2.append(temp)
+            elif lists[i][2] == 3:
+                star_3.append(temp)
+            elif lists[i][2] == 4:
+                star_4.append(temp)
+            elif lists[i][2] == 5:
+                star_5.append(temp)
+
+        db.commit()
+        return 0, res  # 成功
+    except Exception as e:
+        print('register  Erorr ===== ', e)
+        return 1, '查询失败'
     finally:
         if db != '':
             db.close()  # 关闭连接

@@ -7,13 +7,7 @@ import json
 import math
 from Recommender.handlers.util import dbOptions, package
 
-'''修改 个人信息'''
-@require_http_methods(["POST"])
-def handle_info_change(request):
-    pass
 
-
-'''查询 个人信息'''
 @require_http_methods(["GET"])
-def handle_info_query(request):
+def handle_hot_query(request):
     pass

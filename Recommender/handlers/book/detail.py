@@ -5,16 +5,11 @@ from django.views.decorators.http import require_http_methods
 from django.core import serializers
 import json
 import math
+
 from Recommender.handlers.util import dbOptions, package
 
 
-'''修改 个人信息'''
-@require_http_methods(["POST"])
-def handle_info_change(request):
-    pass
-
-
-'''查询 个人信息'''
+'''书本详细信息  需要连表查询 标签 、 是否已被该用户评分等'''
 @require_http_methods(["GET"])
-def handle_info_query(request):
+def handle_book_detail(request):
     pass
