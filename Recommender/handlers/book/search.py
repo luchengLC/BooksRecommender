@@ -12,7 +12,7 @@ from Recommender.handlers.util import dbOptions, package
 '''模糊搜索'''
 @require_http_methods(["GET"])
 def handle_search(request):
-    wd = parse.unquote(request.GET.get('wd'))  # url解码
+    wd = parse.unquote(request.GET.get('wd'))  # url解码 涉及中文
     # print('wd = ', wd)
     pageno = int(request.GET.get('pageno'))  # 转换成整型
     # order = request.GET.get('order')
