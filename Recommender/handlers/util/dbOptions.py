@@ -211,3 +211,91 @@ def favor_query(sql, params):
     finally:
         if db != '':
             db.close()  # 关闭连接
+
+
+'''书本信息查询 详细'''
+
+
+def detail_query(sql, sql_tags, bookId):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, bookId)  # 执行
+        res_book = cur.fetchall()
+        db.commit()
+
+        if len(res_book) == 1:
+            cur.execute(sql_tags, bookId)
+            res_tag_tmp = cur.fetchall()
+            db.commit()
+            res_tag = []
+            for i in res_tag_tmp:
+                tmp = {
+                    'tagName': i[0],
+                    'tagRank': i[1],
+                }
+                res_tag.append(tmp)
+
+            res = {
+                'bookId': res_book[0][0],
+                'bookName': res_book[0][1],
+                'subjectUrl': res_book[0][2],
+                'imgUrl': res_book[0][3],
+                'author': res_book[0][4],
+                'pubDate': res_book[0][5],
+                'publisher': res_book[0][6],
+                'ratingScore': res_book[0][7],
+                'ratingNum': res_book[0][8],
+                'price': res_book[0][9],
+                'ISBN': res_book[0][10],
+                'summary': res_book[0][11],
+                'tags': res_tag
+            }
+            return 0, res
+        else:
+            res = '没有查询到对应图书详细信息！'
+            return 1, res
+    except Exception as e:
+        print('register  Erorr ===== ', e)
+        return 2, '查询出错!'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+'''查询 某用户 对 某书的评分   可能没有评分'''
+def star_query(sql, userId, bookId):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, (userId, bookId))  # 执行
+        res_tmp = cur.fetchall()
+        db.commit()
+        if len(res_tmp) == 1:   # 没有查询到==该用户没有对此书评价过
+            print(res_tmp)
+            res = {
+                'starState': 1,  # 有评价
+                'starMsg': '已评价',  # 有评价
+                'star':res_tmp[0]
+            }
+        else:
+            res = {
+                'starState': 0,  # 没有评价
+                'starMsg': '未评价',  # 没有评价
+                'star': 0
+            }
+        return 0, res
+    except Exception as e:
+        print('register  Erorr ===== ', e)
+        res = {
+            'starState': 0,  # 没有评价
+            'msg': '用户评分查询异常!'
+        }
+        return 1, res
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
