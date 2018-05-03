@@ -23,13 +23,13 @@ urlpatterns = [
 
     # 用户 user
     # # 注册
-    url(r'user/register', register.handle_register),
+    # url(r'user/register', register.handle_register),
     # # 登录
-    url(r'user/login', login.handle_login),
+    # url(r'user/login', login.handle_login),
     # # 保持用户登录状态
     # url(r'user/home', home.handle_home),
     # # 退出
-    url(r'user/logout', logout.handle_logout),
+    # url(r'user/logout', logout.handle_logout),
     # # 用户信息
     # url(r'user/info', info.handle_logout),
 

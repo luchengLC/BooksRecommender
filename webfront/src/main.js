@@ -14,7 +14,8 @@ Vue.prototype.$http = axios;
 
 Vue.config.productionTip = false
 
-Vue.use(ElementUI, { size: 'small' })
+// Vue.use(ElementUI, { size: 'small' })
+Vue.use(ElementUI)
 
 /* eslint-disable no-new */
 new Vue({

@@ -4,7 +4,6 @@
     <div class="mid-parent">
       <div class="mid">  <!--去掉-->
         <midContent class="midContent"></midContent>
-        <rightContent class="rightContent"></rightContent>
       </div>
     </div>
     <bottom class="bottom"></bottom>
@@ -14,14 +13,12 @@
 <script>
 import TopBar from './parts/TopBar'
 import MidContent from './parts/Content'
-import RightContent from './parts/smallHot'
 import Bottom from './parts/Bottom'
 
 export default {
   components: {
     'topBar': TopBar,
     'midContent': MidContent,
-    'rightContent': RightContent,
     'bottom': Bottom
   }
 }
@@ -52,20 +49,7 @@ export default {
     display: flex;
     flex-direction: column; /* 方向 列   上到下*/
     .top-bar {
-      .el-menu {
-        .el-menu-item {
-          height: 30px;
-          line-height: 30px;
-        }
 
-        #name-login, #logout {
-          float: right;
-        }
-
-        #logout {
-          /*display: none;*/
-        }
-      }
     }
     .mid-parent {
       display: -webkit-flex; /* Safari  chrome */
@@ -90,31 +74,12 @@ export default {
           /*-moz-box-shadow: #777 0 0 2px;*/
           /*box-shadow: #777 0 0 2px;*/
           .mainContent {
-            display: -webkit-flex; /* Safari  chrome */
-            display: flex;
-            flex-direction: column; /* 方向 树   上到下*/
-            .search-bar {
-              /*display: none;*/
-            }
+
           }
-          .hotContent {
-            display: -webkit-flex; /* Safari  chrome */
-            display: flex;
-          }
-          .myFavor {
-            display: -webkit-flex; /* Safari  chrome */
-            display: flex;
-          }
+
+
         }
-        .rightContent {
-          max-width: 500px;
-          min-width: 130px;
-          /*display: none;*/
-          /*flex: 2;*/
-          /*-webkit-box-shadow: #777 0 0 2px;*/
-          /*-moz-box-shadow: #777 0 0 2px;*/
-          /*box-shadow: #777 0 0 2px;*/
-        }
+
       }
     }
     .bottom {

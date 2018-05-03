@@ -6,125 +6,182 @@
         <el-button class="search-btn" slot="append" icon="el-icon-search"></el-button>
       </div>
     </div>
-    <!--书表-->
-    <ul class="books-container">
-      <h1>五颗星</h1>
-      <li class="book-item" v-for="(item, index) in fiveStarBooks" :key="index">
-        <div class="pic">
-          <a target="_blank" :href="item.bookLink" :title="item.bname">
-            <img :src="item.imgUrl" alt="">
-          </a>
-        </div>
-        <div class="info">
-          <h2 class="bname">
-            <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
-          </h2>
-          <p class="publi">{{item.publi}}</p>
-          <div class="evaluate">
-            <span>评分：</span>
-            <span class="score">{{item.score}}</span>
-            <span class="num">（{{item.num}}人评价）</span>
-          </div>
-          <p class="brief">{{item.brief}}</p>
-        </div>
 
-      </li>
+    <h1 style="width: 100%">我的喜爱列表</h1>
 
-      <hr/>
-      <h1>四颗星</h1>
-      <li class="book-item" v-for="(item, index) in fourStarBooks" :key="index">
-        <div class="pic">
-          <a target="_blank" :href="item.bookLink" :title="item.bname">
-            <img :src="item.imgUrl" alt="">
-          </a>
-        </div>
-        <div class="info">
-          <h2 class="bname">
-            <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
-          </h2>
-          <p class="publi">{{item.publi}}</p>
-          <div class="evaluate">
-            <span>评分：</span>
-            <span class="score">{{item.score}}</span>
-            <span class="num">（{{item.num}}人评价）</span>
-          </div>
-          <p class="brief">{{item.brief}}</p>
-        </div>
+    <el-collapse  v-model="activeNames">
+      <el-collapse-item  name="5">
+        <template slot="title">
+          <el-rate
+            class="el-rate"
+            v-model="value5"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="{value}星">
+          </el-rate>
+        </template>
+        <ul class="books-container">
+          <li class="book-item" v-for="(item, index) in fiveStarBooks" :key="index">
+            <div class="pic">
+              <a target="_blank" :href="item.bookLink" :title="item.bname">
+                <img :src="item.imgUrl" alt="">
+              </a>
+            </div>
+            <div class="info">
+              <h2 class="bname">
+                <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
+              </h2>
+              <p class="publi">{{item.publi}}</p>
+              <div class="evaluate">
+                <span>评分：</span>
+                <span class="score">{{item.score}}</span>
+                <span class="num">（{{item.num}}人评价）</span>
+              </div>
+              <p class="brief">{{item.brief}}</p>
+            </div>
 
-      </li>
+          </li>
+        </ul>
+      </el-collapse-item>
+      <el-collapse-item   name="4">
+        <template slot="title">
+          <el-rate
+            class="el-rate"
+            v-model="value4"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="{value}星">
+          </el-rate>
+        </template>
+        <ul class="books-container">
+          <li class="book-item" v-for="(item, index) in fourStarBooks" :key="index">
+            <div class="pic">
+              <a target="_blank" :href="item.bookLink" :title="item.bname">
+                <img :src="item.imgUrl" alt="">
+              </a>
+            </div>
+            <div class="info">
+              <h2 class="bname">
+                <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
+              </h2>
+              <p class="publi">{{item.publi}}</p>
+              <div class="evaluate">
+                <span>评分：</span>
+                <span class="score">{{item.score}}</span>
+                <span class="num">（{{item.num}}人评价）</span>
+              </div>
+              <p class="brief">{{item.brief}}</p>
+            </div>
 
-      <hr/>
-      <h1>三颗星</h1>
-      <li class="book-item" v-for="(item, index) in threeStarBooks" :key="index">
-        <div class="pic">
-          <a target="_blank" :href="item.bookLink" :title="item.bname">
-            <img :src="item.imgUrl" alt="">
-          </a>
-        </div>
-        <div class="info">
-          <h2 class="bname">
-            <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
-          </h2>
-          <p class="publi">{{item.publi}}</p>
-          <div class="evaluate">
-            <span>评分：</span>
-            <span class="score">{{item.score}}</span>
-            <span class="num">（{{item.num}}人评价）</span>
-          </div>
-          <p class="brief">{{item.brief}}</p>
-        </div>
+          </li>
+        </ul>
+      </el-collapse-item>
+      <el-collapse-item  name="3">
+        <template slot="title">
+          <el-rate
+            class="el-rate"
+            v-model="value3"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="{value}星">
+          </el-rate>
+        </template>
+        <ul class="books-container">
+          <li class="book-item" v-for="(item, index) in threeStarBooks" :key="index">
+            <div class="pic">
+              <a target="_blank" :href="item.bookLink" :title="item.bname">
+                <img :src="item.imgUrl" alt="">
+              </a>
+            </div>
+            <div class="info">
+              <h2 class="bname">
+                <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
+              </h2>
+              <p class="publi">{{item.publi}}</p>
+              <div class="evaluate">
+                <span>评分：</span>
+                <span class="score">{{item.score}}</span>
+                <span class="num">（{{item.num}}人评价）</span>
+              </div>
+              <p class="brief">{{item.brief}}</p>
+            </div>
 
-      </li>
+          </li>
+        </ul>
+      </el-collapse-item>
+      <el-collapse-item  name="2">
+        <template slot="title">
+          <el-rate
+            class="el-rate"
+            v-model="value2"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="{value}星">
+          </el-rate>
+        </template>
+        <ul class="books-container">
+          <li class="book-item" v-for="(item, index) in twoStarBooks" :key="index">
+            <div class="pic">
+              <a target="_blank" :href="item.bookLink" :title="item.bname">
+                <img :src="item.imgUrl" alt="">
+              </a>
+            </div>
+            <div class="info">
+              <h2 class="bname">
+                <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
+              </h2>
+              <p class="publi">{{item.publi}}</p>
+              <div class="evaluate">
+                <span>评分：</span>
+                <span class="score">{{item.score}}</span>
+                <span class="num">（{{item.num}}人评价）</span>
+              </div>
+              <p class="brief">{{item.brief}}</p>
+            </div>
 
-      <hr/>
-      <h1>二颗星</h1>
-      <li class="book-item" v-for="(item, index) in twoStarBooks" :key="index">
-        <div class="pic">
-          <a target="_blank" :href="item.bookLink" :title="item.bname">
-            <img :src="item.imgUrl" alt="">
-          </a>
-        </div>
-        <div class="info">
-          <h2 class="bname">
-            <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
-          </h2>
-          <p class="publi">{{item.publi}}</p>
-          <div class="evaluate">
-            <span>评分：</span>
-            <span class="score">{{item.score}}</span>
-            <span class="num">（{{item.num}}人评价）</span>
-          </div>
-          <p class="brief">{{item.brief}}</p>
-        </div>
+          </li>
+        </ul>
+      </el-collapse-item>
+      <el-collapse-item  name="1">
+        <template slot="title">
+          <el-rate
+            class="el-rate"
+            v-model="value1"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="{value}星">
+          </el-rate>
+        </template>
+        <ul class="books-container">
+          <li class="book-item" v-for="(item, index) in oneStarBooks" :key="index">
+            <div class="pic">
+              <a target="_blank" :href="item.bookLink" :title="item.bname">
+                <img :src="item.imgUrl" alt="">
+              </a>
+            </div>
+            <div class="info">
+              <h2 class="bname">
+                <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
+              </h2>
+              <p class="publi">{{item.publi}}</p>
+              <div class="evaluate">
+                <span>评分：</span>
+                <span class="score">{{item.score}}</span>
+                <span class="num">（{{item.num}}人评价）</span>
+              </div>
+              <p class="brief">{{item.brief}}</p>
+            </div>
 
-      </li>
+          </li>
+        </ul>
+      </el-collapse-item>
+    </el-collapse>
 
-      <hr/>
-      <h1>一颗星</h1>
-      <li class="book-item" v-for="(item, index) in oneStarBooks" :key="index">
-        <div class="pic">
-          <a target="_blank" :href="item.bookLink" :title="item.bname">
-            <img :src="item.imgUrl" alt="">
-          </a>
-        </div>
-        <div class="info">
-          <h2 class="bname">
-            <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
-          </h2>
-          <p class="publi">{{item.publi}}</p>
-          <div class="evaluate">
-            <span>评分：</span>
-            <span class="score">{{item.score}}</span>
-            <span class="num">（{{item.num}}人评价）</span>
-          </div>
-          <p class="brief">{{item.brief}}</p>
-        </div>
-
-      </li>
-
-    </ul>
-    <!---->
-    <!---->
     <div style="margin: 50px 0 20px 0; padding: 0;">
       <el-pagination
         background
@@ -143,6 +200,12 @@
     data () {
       return {
         input5: '',
+        value5:5,
+        value4:4,
+        value3:3,
+        value2:2,
+        value1:1,
+        activeNames: '5',
         fiveStarBooks: [
           {
             bname: '海贼王:ONE PIECE',
@@ -251,6 +314,15 @@
         }
       }
     }
+
+    h1 {
+      text-align: left;
+    }
+
+    .el-rate {
+      padding-top: 15px;
+    }
+
     .books-container {
       display: -webkit-flex; /* Safari  chrome */
       display: flex;
@@ -258,12 +330,10 @@
       flex-wrap: nowrap; /* 不换行 */
       margin: 24px 40px 5px 5px;
       /*justify-content: center;*/
-      h1 {
-        text-align: left;
-      }
+
       .book-item {
         border-top: 1px dashed #ddd;
-        margin: 2px 10px 20px 10px;
+        margin: 10px 10px 20px 10px;
         padding: 10px 0 0 0;
         display: -webkit-flex; /* Safari  chrome */
         display: flex;

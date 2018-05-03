@@ -49,5 +49,6 @@
   body {
     margin: 0;
     min-width: 430px;
+    min-width: 535px;
   }
 </style>

@@ -14,14 +14,12 @@
 <script>
   import TopBar from './parts/TopBar'
   import MidContent from './parts/ContentFavor'
-  import RightContent from './parts/smallHot'
   import Bottom from './parts/Bottom'
 
   export default {
     components: {
       'topBar': TopBar,
       'midContent': MidContent,
-      'rightContent': RightContent,
       'bottom': Bottom
     }
   }
