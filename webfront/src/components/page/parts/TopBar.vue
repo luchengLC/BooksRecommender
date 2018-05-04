@@ -8,8 +8,8 @@
       background-color="#545c64"
       text-color="#ffffff"
       active-text-color="#409EFF" >
-      <el-button class="menu-btn" type="text" id="sysName">图书推荐系统</el-button>
-      <el-button class="menu-btn" type="text" id="favor">{{ btnFavor }}</el-button>
+      <el-button class="menu-btn" type="text" id="sysName" @click="loaderMain">图书推荐系统</el-button>
+      <el-button class="menu-btn" type="text" id="favor" @click="loaderFavor">{{ btnFavor }}</el-button>
 
       <el-button class="menu-btn" type="text" id="register" @click="dialogRegisterVisible=true" v-if="isLogin">{{ btnRegister }}
       </el-button>
@@ -30,8 +30,8 @@
       width="500px"
       :before-close="handleLoginCansel">
       <el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="90px">
-        <el-form-item label="账号" prop="username">
-          <el-input type="text" v-model="loginForm.username" placeholder="手机号码..."></el-input>
+        <el-form-item label="账号" prop="userId">
+          <el-input type="text" v-model="loginForm.userId" placeholder="手机号码..."></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input type="password" v-model="loginForm.password" placeholder="密码..."></el-input>
@@ -51,11 +51,11 @@
       width="500px"
       :before-close="handleRegisterCansel">
       <el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="90px">
-        <el-form-item label="账号" prop="username">
-          <el-input v-model="loginForm.username" placeholder="手机号码..."></el-input>
+        <el-form-item label="账号" prop="userId">
+          <el-input v-model="loginForm.userId" placeholder="手机号码..."></el-input>
         </el-form-item>
-        <el-form-item label="昵称" prop="name">
-          <el-input v-model="loginForm.name" placeholder="昵称..."></el-input>
+        <el-form-item label="昵称" prop="nickname">
+          <el-input v-model="loginForm.nickname" placeholder="昵称..."></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input type="password" v-model="loginForm.password" placeholder="密码..."></el-input>
@@ -97,7 +97,7 @@ export default {
       fullscreenLoading: false,
       userId:'',
       userIdTmp:'',
-      name: '',
+      nickname: '',
       dialogLoginVisible: false,
       dialogRegisterVisible: false,
       dialogLogoutVisible: false,
@@ -112,12 +112,12 @@ export default {
       loginForm: {
         userId: '',
         password: '',
-        name: '',
+        nickname: '',
         email: '',
       },
       registerForm: {},
       rules: {
-        username: [
+        userId: [
           {required: true, message: '请输入账号（手机号码）', trigger: 'blur'},
           {pattern: /^0?(13[0-9]|[15[7-9]|153|156|18[7-9])[0-9]{8}$/, message: '请正确地输入账号（手机号码）', trigger: 'blur'}
         ],
@@ -126,7 +126,7 @@ export default {
           {min: 6, max: 30, message: '长度在 6 到 30 个字符', trigger: 'blur'},
           {pattern: /^(\w){6,20}$/, message: '只能输入6-20个字母、数字、下划线', trigger: 'blur'}
         ],
-        name: [
+        nickname: [
           {required: true, message: '请输入昵称', trigger: 'blur'},
         ],
         email: [
@@ -145,12 +145,26 @@ export default {
     this.$nextTick(function () {
       this.fullscreenLoading= false;
       this.btnName= '游客';
+      this.nickname= '游客';
       this.isLogin = true;
       this.isLogout = false;
 
     })
   },
   methods: {
+    loaderFavor() {
+      this.$router.push({name: 'favor', params: {userId: this.userId}});
+//      if (this.userId === '' || this.nickname === '游客' || this.nickname === '') {
+//        this.$message.error('您还未注册或登录！请先进行注册登录操作！')
+//      } else {
+//        // console.log('转跳到 通知列表')
+//        // console.log('现在username  = '+this.username)
+//        this.$router.push({name: 'favor', params: {userId: userId}});
+//      }
+    },
+    loaderMain(){
+      this.$router.push({name: 'main'});
+    },
     handleLoginCansel(done) {  //登录
       this.dialogLoginVisible = false;
       this.$refs['loginForm'].resetFields();  // 清空

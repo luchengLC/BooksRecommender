@@ -8,6 +8,7 @@
         </div>
       </div>
 
+      <!--页面初始化时的热门-->
       <h3 class="page-title" v-if="showInitHot"><i class="el-icon-menu"></i>热门</h3>
       <ul class="books-hot" v-if="showInitHot">
         <li class="book-item" v-for="(item, index) in hotBooks" :key="index">
@@ -40,6 +41,7 @@
           <div class="info">
             <h2 class="bname">
               <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
+              <el-button type="primary" plain size="medium" style="margin-left: 30px; padding: 1px 4px 1px 4px; color: #ff994b;"> 收藏 </el-button>
             </h2>
             <p class="publi">{{item.publi}}</p>
             <div class="evaluate">
@@ -63,17 +65,13 @@
       </div>
     </div>
 
-
-
-
-
     <!--右侧-->
     <div class="hotContent" v-if="showSearchResult">
       <div style="margin: 50px 0 0 0; padding: 0">
         <!--标签推荐-->
         <h3 class="right-page-title"><i class="el-icon-menu"></i>标签推荐</h3>
         <div class="tags">
-          <el-button class="tag-btn" type="text" v-for="(item, index) in tags">
+          <el-button class="tag-btn" type="text" v-for="(item, index) in tags" :key="index">
             <el-tag class="tag">{{item.tagName}}</el-tag>
           </el-button>
         </div>

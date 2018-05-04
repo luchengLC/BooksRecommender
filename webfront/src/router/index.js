@@ -11,13 +11,21 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Main',
-      component: Main
+      meta: {
+        keepAlive: true,
+      },
+      name: 'main',
+      component: Main,
+
     },
     {
       path: '/favor',
-      name: 'Favor',
-      component: Favor
+      meta: {
+        keepAlive: true,
+      },
+      name: 'favor',
+      component: Favor,
+
     },
   ]
 })

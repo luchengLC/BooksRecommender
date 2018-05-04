@@ -48,9 +48,6 @@ export default {
     display: -webkit-flex; /* Safari  chrome */
     display: flex;
     flex-direction: column; /* 方向 列   上到下*/
-    .top-bar {
-
-    }
     .mid-parent {
       display: -webkit-flex; /* Safari  chrome */
       display: flex;
@@ -68,18 +65,7 @@ export default {
           display: -webkit-flex; /* Safari  chrome */
           display: flex;
           flex-direction: row; /* 方向 树   上到下*/
-          /*flex-wrap: wrap;  !* 要换行 *!*/
-          /*flex: 4;*/
-          /*-webkit-box-shadow: #777 0 0 2px;*/
-          /*-moz-box-shadow: #777 0 0 2px;*/
-          /*box-shadow: #777 0 0 2px;*/
-          .mainContent {
-
-          }
-
-
         }
-
       }
     }
     .bottom {

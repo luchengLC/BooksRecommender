@@ -3,8 +3,7 @@
     <top-bar class="top-bar"></top-bar>
     <div class="mid-parent">
       <div class="mid">  <!--去掉-->
-        <midContent class="midContent"></midContent>
-        <!--<rightContent class="rightContent"></rightContent>-->
+        <contentFavor class="contentFavor"></contentFavor>
       </div>
     </div>
     <bottom class="bottom"></bottom>
@@ -13,13 +12,13 @@
 
 <script>
   import TopBar from './parts/TopBar'
-  import MidContent from './parts/ContentFavor'
+  import ContentFavor from './parts/ContentFavor'
   import Bottom from './parts/Bottom'
 
   export default {
     components: {
       'topBar': TopBar,
-      'midContent': MidContent,
+      'contentFavor': ContentFavor,
       'bottom': Bottom
     }
   }
@@ -49,22 +48,6 @@
     display: -webkit-flex; /* Safari  chrome */
     display: flex;
     flex-direction: column; /* 方向 列   上到下*/
-    .top-bar {
-      .el-menu {
-        .el-menu-item {
-          height: 30px;
-          line-height: 30px;
-        }
-
-        #name-login, #logout {
-          float: right;
-        }
-
-        #logout {
-          /*display: none;*/
-        }
-      }
-    }
     .mid-parent {
       display: -webkit-flex; /* Safari  chrome */
       display: flex;
@@ -77,41 +60,14 @@
         flex-direction: row; /* 方向 横   左到右*/
         flex-wrap: nowrap; /* 不许换行 */
         justify-content: center;
-        width: 80%;
+        width: 90%;
         .midBig {
           display: -webkit-flex; /* Safari  chrome */
           display: flex;
           flex-direction: row; /* 方向 树   上到下*/
-          /*flex-wrap: wrap;  !* 要换行 *!*/
-          /*flex: 4;*/
-          /*-webkit-box-shadow: #777 0 0 2px;*/
-          /*-moz-box-shadow: #777 0 0 2px;*/
-          /*box-shadow: #777 0 0 2px;*/
-          .mainContent {
-            display: -webkit-flex; /* Safari  chrome */
-            display: flex;
-            flex-direction: column; /* 方向 树   上到下*/
-            .search-bar {
-              /*display: none;*/
-            }
+          .contentFavor {
+
           }
-          .hotContent {
-            display: -webkit-flex; /* Safari  chrome */
-            display: flex;
-          }
-          .myFavor {
-            display: -webkit-flex; /* Safari  chrome */
-            display: flex;
-          }
-        }
-        .rightSmall {
-          max-width: 500px;
-          min-width: 130px;
-          /*display: none;*/
-          /*flex: 2;*/
-          /*-webkit-box-shadow: #777 0 0 2px;*/
-          /*-moz-box-shadow: #777 0 0 2px;*/
-          /*box-shadow: #777 0 0 2px;*/
         }
       }
     }
