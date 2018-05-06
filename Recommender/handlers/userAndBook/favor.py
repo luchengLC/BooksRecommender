@@ -13,12 +13,19 @@ def handle_favor_add(request):
     userId = request.POST.get('userId')
     bookId = request.POST.get('bookId')
     starNum = request.POST.get('starNum')
+    starTime = request.POST.get('starTime')
+
+    print('starTime ***')
+    print(starTime)
+
+    print(starTime)
     msg = {
         'userId': userId,
         'bookId': bookId,
-        'starNum': starNum
+        'starNum': starNum,
+        'starTime': starTime,
     }
-    sql = 'INSERT INTO favor(userId, bookId, starNum) VALUES(%s, %s, %s)'
+    sql = 'INSERT INTO favor(userId, bookId, starNum, starTime) VALUES(%s, %s, %s, %s)'
     result_code = dbOptions.favor_insert(sql, msg)
     if result_code == 0:
         return JsonResponse(package.successPack(msg))
@@ -26,9 +33,9 @@ def handle_favor_add(request):
         return JsonResponse(package.errorPack('评分失败，您可能已评分或者书籍不存在！'))
 
 
-@require_http_methods(["GET"])
+@require_http_methods(["POST"])
 def handle_favor_query(request):
-    userId = request.GET.get('userId')
+    userId = request.POST.get('userId')
     # starNum = request.POST.get('starNum')  # sql查询一次，后台分组返回，一次性返回
 
     # 连表查询返回
@@ -59,3 +66,15 @@ def handle_favor_delete(request):
         return JsonResponse(package.successPack(msg))
     else:
         return JsonResponse(package.errorPack('移除失败，请重试！'))
+
+
+@require_http_methods(["POST"])
+def handle_favor_star_query(request):
+    userId = request.POST.get('userId')  # userId可能是空值'' , 可以先在前台处理
+    bookId = request.POST.get('bookId')
+    sql = 'SELECT starNum, starTime FROM favor WHERE userId=%s AND bookId=%s'
+    result_code, result = dbOptions.star_query(sql, userId, bookId)
+    if result_code == 0:
+        return JsonResponse(package.successPack(result))
+    else:
+        return JsonResponse(package.errorPack(result))

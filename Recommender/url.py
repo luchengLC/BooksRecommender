@@ -45,5 +45,7 @@ urlpatterns = [
     url(r'favor/query', favor.handle_favor_query),
     url(r'favor/delete', favor.handle_favor_delete),
 
+    url(r'star/query', favor.handle_favor_star_query)
+
 
 ]

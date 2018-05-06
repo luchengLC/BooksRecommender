@@ -48,12 +48,15 @@
     display: -webkit-flex; /* Safari  chrome */
     display: flex;
     flex-direction: column; /* 方向 列   上到下*/
+    height: 100%;
+    min-height: 100vh;
     .mid-parent {
       display: -webkit-flex; /* Safari  chrome */
       display: flex;
       flex-direction: column; /* 方向 列   上到下*/
       align-items: center;
       background: #f5f5f5;
+      flex: 1;
       .mid {
         display: -webkit-flex; /* Safari  chrome */
         display: flex;

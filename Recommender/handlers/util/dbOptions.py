@@ -26,7 +26,7 @@ def search(sql, params):
                 'ratingNum': lists[i][8],
                 'price': lists[i][9],
                 'ISBN': lists[i][10],
-                'summery': lists[i][11],
+                'summary': lists[i][11],
             }
             res.append(temp)
         db.commit()
@@ -120,11 +120,11 @@ def favor_insert(sql, params):
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
                              charset="utf8")
         cur = db.cursor()  # 获取操作游标
-        cur.execute(sql, (params['userId'], params['bookId'], params['starNum']))  # 执行
+        cur.execute(sql, (params['userId'], params['bookId'], params['starNum'], params['starTime']))  # 执行
         db.commit()
         return 0  # 成功
     except Exception as e:
-        print('register  Erorr ===== ', e)
+        print('rate add  Erorr ===== ', e)
         return 1
     finally:
         if db != '':
@@ -190,7 +190,7 @@ def favor_query(sql, params):
                 'ratingNum': lists[i][10],
                 'price': lists[i][11],
                 'ISBN': lists[i][12],
-                'summery': lists[i][13],
+                'summary': lists[i][13],
             }
             if lists[i][2] == 1:
                 star_1.append(temp)
@@ -266,6 +266,8 @@ def detail_query(sql, sql_tags, bookId):
 
 
 '''查询 某用户 对 某书的评分   可能没有评分'''
+
+
 def star_query(sql, userId, bookId):
     try:
         db = ''
@@ -275,27 +277,56 @@ def star_query(sql, userId, bookId):
         cur.execute(sql, (userId, bookId))  # 执行
         res_tmp = cur.fetchall()
         db.commit()
-        if len(res_tmp) == 1:   # 没有查询到==该用户没有对此书评价过
+        if len(res_tmp) == 1:  # 没有查询到==该用户没有对此书评价过
             print(res_tmp)
             res = {
                 'starState': 1,  # 有评价
-                'starMsg': '已评价',  # 有评价
-                'star':res_tmp[0]
+                'msg': '已评价',  # 有评价
+                'star': res_tmp[0][0],
+                'starTime': res_tmp[0][1]
             }
         else:
             res = {
                 'starState': 0,  # 没有评价
-                'starMsg': '未评价',  # 没有评价
-                'star': 0
+                'msg': '未评价',  # 没有评价
+                'star': 0,
             }
         return 0, res
     except Exception as e:
-        print('register  Erorr ===== ', e)
+        print('rate  Erorr ===== ', e)
         res = {
             'starState': 0,  # 没有评价
             'msg': '用户评分查询异常!'
         }
         return 1, res
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+'''标签查询'''
+
+
+def tag_query(sql, bookId):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, bookId)
+        res_tag_tmp = cur.fetchall()
+        db.commit()
+        res_tag = []
+        for i in res_tag_tmp:
+            tmp = {
+                'tagName': i[0],
+                'tagRank': i[1],
+            }
+            res_tag.append(tmp)
+        return 0, res_tag
+    except Exception as e:
+        print('tag query  Erorr ===== ', e)
+        return 1, ''
     finally:
         if db != '':
             db.close()  # 关闭连接

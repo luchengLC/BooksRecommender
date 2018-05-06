@@ -3,15 +3,17 @@
     <div class="mainContent" style="margin: 0; padding: 0">
       <div class="search-bar">
         <div class="div-input">
-          <el-input class="search-input" placeholder="搜索..." v-model="searchInput"></el-input>
-          <el-button class="search-btn" slot="append" icon="el-icon-search" @click="searchHandle"></el-button>
+          <el-input class="search-input" placeholder="搜索..." v-model="searchInput"
+                    @keyup.enter.native="searchHandle(1)"></el-input>
+          <el-button class="search-btn" slot="append" icon="el-icon-search" @click="searchHandle(1)"
+                     v-loading.fullscreen.lock="fullscreenLoading"></el-button>
         </div>
       </div>
 
       <!--页面初始化时的热门-->
       <h3 class="page-title" v-if="showInitHot"><i class="el-icon-menu"></i>热门</h3>
-      <ul class="books-hot" v-if="showInitHot">
-        <li class="book-item" v-for="(item, index) in hotBooks" :key="index">
+      <ul class="books-hot-init" v-if="showInitHot">
+        <li class="book-item" v-for="(item, index) in hotBooks" :key="item.bookId">
           <div class="pic">
             <a target="_blank" class="a" :href="item.bookLink">
               <img class="img" :src="item.imgUrl" alt=""/>
@@ -31,25 +33,34 @@
       </ul>
       <!--搜索 结果 书表-->
       <h3 class="page-title" v-if="showSearchResult"><i class="el-icon-menu"></i>搜索结果</h3>
-      <ul class="books-container"  v-if="showSearchResult">
-        <li class="book-item" v-for="(item, index) in books" :key="index">
+      <ul class="books-container" v-if="showSearchResult">
+        <li class="book-item" v-for="(item, index) in books" :key="item.bookId">
           <div class="pic">
-            <a target="_blank" :href="item.bookLink" :title="item.bname">
-              <img :src="item.imgUrl" alt="">
+            <a target="_blank" :href="item.subjectUrl" :title="item.bookName">
+              <img :src="item.imgUrl" :alt="item.bookName">
             </a>
           </div>
           <div class="info">
             <h2 class="bname">
-              <a target="_blank" class="aname" :href="item.bookLink">{{item.bname}}</a>
-              <el-button type="primary" plain size="medium" style="margin-left: 30px; padding: 1px 4px 1px 4px; color: #ff994b;"> 收藏 </el-button>
+              <a target="_blank" class="aname" :href="item.subjectUrl">{{item.bookName}}</a>
+              <el-button class="collect" type="primary" plain size="medium" @click="handleCollect(item)">
+                收藏
+              </el-button>
+              <!--<span>我的评分：<span style="color: #ff994b">4 stars</span>/5 stars</span>-->
             </h2>
-            <p class="publi">{{item.publi}}</p>
+            <p class="publi">{{item.author}} / {{item.publisher}} / {{item.pubDate}} / {{item.price}}</p>
             <div class="evaluate">
               <span>评分：</span>
-              <span class="score">{{item.score}}</span>
-              <span class="num">（{{item.num}}人评价）</span>
+              <span class="score">{{item.ratingScore}}</span>
+              <span class="num">（{{item.ratingNum}}人评价）</span>
             </div>
-            <p class="brief">{{item.brief}}</p>
+            <p class="brief">{{item.summary}}</p>
+            <div class="tags">
+              <span class="span-tag"
+                    v-for="(i, index2) in item.tags" :key="i.tags">
+              {{i.tagName}}</span>
+            </div>
+
           </div>
 
         </li>
@@ -58,9 +69,11 @@
       <!--分页，翻页器-->
       <div class="page" v-if="showSearchResult">
         <el-pagination
+          @current-change="handleCurrentChange"
           background
           layout="prev, pager, next"
-          :total="1000">
+          :page-size="20"
+          :total="itemCount">
         </el-pagination>
       </div>
     </div>
@@ -71,15 +84,17 @@
         <!--标签推荐-->
         <h3 class="right-page-title"><i class="el-icon-menu"></i>标签推荐</h3>
         <div class="tags">
-          <el-button class="tag-btn" type="text" v-for="(item, index) in tags" :key="index">
-            <el-tag class="tag">{{item.tagName}}</el-tag>
+
+          <el-button class="tag-btn" type="text" v-for="(i, index2) in tags" :key="i.tags">
+             <span class="span-tag">
+              {{i.tagName}}</span>
           </el-button>
         </div>
 
         <!--书籍推荐-->
         <h3 class="right-page-title"><i class="el-icon-menu"></i>书籍推荐</h3>
         <ul class="books-recommend">
-          <li class="book-item" v-for="(item, index) in bookRec" :key="index">
+          <li class="book-item" v-for="(item, index) in bookRec" :key="item.bookId">
             <div class="pic">
               <a target="_blank" class="a" :href="item.bookLink">
                 <img class="img" :src="item.imgUrl" alt=""/>
@@ -94,6 +109,9 @@
               <div class="author">
                 {{item.author}}
               </div>
+              <el-button class="collect" type="primary" plain size="medium">
+                收藏
+              </el-button>
             </div>
           </li>
         </ul>
@@ -101,7 +119,7 @@
 
         <h3 class="right-page-title"><i class="el-icon-menu"></i>HOT</h3>
         <ul class="books-hot">
-          <li class="book-item" v-for="(item, index) in hotBooks" :key="index">
+          <li class="book-item" v-for="(item, index) in hotBooks" :key="item.bookId">
             <div class="pic">
               <a target="_blank" class="a" :href="item.bookLink">
                 <img class="img" :src="item.imgUrl" alt=""/>
@@ -116,6 +134,9 @@
               <div class="author">
                 {{item.author}}
               </div>
+              <el-button class="collect" type="primary" plain size="medium">
+                收藏
+              </el-button>
             </div>
           </li>
         </ul>
@@ -123,6 +144,51 @@
 
 
     </div>
+
+
+    <!--收藏对话框-->
+    <el-dialog
+      title="收藏"
+      :visible.sync="dialogCollectVisible"
+      width="500px"
+      :before-close="handleCollectCansel">
+      <div v-if="hadCollect===false">
+        <p>请给书籍 《{{collectItem.bookName}}》 评收藏分：</p>
+        <div class="rate">
+          <el-rate
+            v-model="valueCollectStarSet"
+            show-score
+            text-color="#ff9900"
+            score-template="{value}"
+            show-text
+            style="margin-top: 2px">
+          </el-rate>
+          <span>{{texts[valueCollectStarSet]}}</span>
+        </div>
+
+      </div>
+      <div v-if="hadCollect===true">
+        <p>您曾于<span class="cbName">{{collectTime}}</span></p>
+        <p>收藏了书籍 <span class="cbName">《{{collectItem.bookName}}》</span>：</p>
+        <div class="rate">
+          <el-rate
+            disabled
+            v-model="valueCollectStarGet"
+            show-score
+            score-template="{value}"
+            text-color="#ff9900"
+            style="margin-top: 2px">
+          </el-rate>
+          <span>{{texts[valueCollectStarGet]}}</span>
+        </div>
+
+        <p>您不需要再次收藏！</p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCollectCansel">取 消</el-button>
+        <el-button type="primary" @click="handleCollectSubmit">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -132,38 +198,27 @@
     components: {ElButton},
     data () {
       return {
+        baseUrl: 'http://127.0.0.1:8000/recommend/',
+        userId: '13411977340',
+        value4: "5",
         showSearchResult: false,
+        fullscreenLoading: false,
         showInitHot: true,
         searchInput: '',
-        books: [
-          {
-            bname: '海贼王:ONE PIECE',
-            publi: '尾田荣一郎 / 董科 / 浙江人民美术出版社 / 2007-11 / 7.50元',
-            score: '9.5',
-            num: '26534',
-            brief: '路飞所生长的小村庄里曾经是一群以「红发香克斯」为首的海盗们的暂居地，而幼年路飞一直希望可以成为他们的一员，可在一次意外的情况下，他吃了一种叫做「橡皮果实」的...',
-            imgUrl: 'https://img1.doubanio.com/mpic/s1492518.jpg',
-            bookLink: 'https://book.douban.com/subject/1474773/'
-          },
-          {
-            bname: '追风筝的人',
-            publi: '[美] 卡勒德·胡赛尼 / 李继宏 / 上海人民出版社 / 2006-5 / 29.00元',
-            score: '8.9',
-            num: '308764',
-            brief: '12岁的阿富汗富家少爷阿米尔与仆人哈桑情同手足。然而，在一场风筝比赛后，发生了一件悲惨不堪的事，阿米尔为自己的懦弱感到自责和痛苦，逼走了哈桑，不久，自己也跟... ',
-            imgUrl: 'https://img3.doubanio.com/mpic/s1727290.jpg',
-            bookLink: 'https://book.douban.com/subject/1770782/'
-          },
-          {
-            bname: '海贼王 : ONE PIECE',
-            publi: '刘慈欣 / 重庆出版社 / 2010-11 / 38.00元',
-            score: '9.2',
-            num: '96472',
-            brief: '与三体文明的战争使人类第一次看到了宇宙黑暗的真相，地球文明像一个恐惧的孩子，熄灭了寻友的篝火，在暗夜中发抖。自以为历经沧桑，其实刚刚蹒跚学步；自以为悟出了生...',
-            imgUrl: 'https://img3.doubanio.com/mpic/s26012674.jpg',
-            bookLink: 'https://book.douban.com/subject/5363767/'
-          }
-        ],
+        itemCount: 0,  // 控制页数
+        curPage: 0,
+        dialogCollectVisible: false,  // 收藏 对话框是否可见
+        hadCollect: false,  // 未评分 控制 显示
+        valueCollectStarGet: 0,
+        valueCollectStarSet: 0,
+        collectItem: {
+          bookName: '',
+          bookId: '',
+          starNum: '',
+        },
+
+        texts: ['', '极差', '较差', '还行', '推荐', '力荐'],
+        books: [],
         tags: [
           {
             tagName: '文学',
@@ -198,12 +253,6 @@
             author: '[爱尔兰] 爱玛·多诺霍'
           },
           {
-            bname: '啊！这样就能辞职了',
-            bookLink: 'https://book.douban.com/subject/27201290/?icn=index-editionrecommend',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29669694.jpg',
-            author: '[日] 安倍夜郎'
-          },
-          {
             bname: '蟹之进行曲1',
             bookLink: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
             imgUrl: 'https://img3.doubanio.com/mpic/s29517015.jpg',
@@ -227,44 +276,6 @@
             bookLink: 'https://book.douban.com/subject/27201290/?icn=index-editionrecommend',
             imgUrl: 'https://img3.doubanio.com/mpic/s29669694.jpg',
             author: '[日] 安倍夜郎'
-          },
-          {
-            bname: '蟹之进行曲1',
-            bookLink: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29517015.jpg',
-            author: '[法] 阿尔蒂尔·德·潘'
-          },
-
-          {
-            bname: '植物花卉插画图案集',
-            bookLink: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29708071.jpg',
-            author: '[英] 鲍伊风尚'
-          },
-          {
-            bname: '神迹',
-            bookLink: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
-            imgUrl: 'https://img1.doubanio.com/mpic/s29708619.jpg',
-            author: '[爱尔兰] 爱玛·多诺霍'
-          },
-          {
-            bname: '啊！这样就能辞职了',
-            bookLink: 'https://book.douban.com/subject/27201290/?icn=index-editionrecommend',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29669694.jpg',
-            author: '[日] 安倍夜郎'
-          },
-          {
-            bname: '蟹之进行曲1',
-            bookLink: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29517015.jpg',
-            author: '[法] 阿尔蒂尔·德·潘'
-          },
-
-          {
-            bname: '植物花卉插画图案集',
-            bookLink: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29708071.jpg',
-            author: '[英] 鲍伊风尚'
           },
 
         ],
@@ -304,15 +315,170 @@
     },
     mounted: function () {
       this.$nextTick(function () {
-          this.showSearchResult = false;
-          this.showInitHot = true;
+        this.showSearchResult = false;
+        this.showInitHot = true;
+        this.fullscreenLoading = false;
+        this.itemCount = 0;
+        // hot books api
+
       })
     },
-    methods: {
-      searchHandle(){
-        this.showSearchResult = true;
-        this.showInitHot = false;
+    watch: {
+      '$route'(to, from){
+        if (to.name === 'main' && from.name === 'favor') {
+          let searchState = this.$route.params.searchState;
+          if (searchState === 1) {
+            this.showSearchResult = true;
+            this.showInitHot = false;
+
+            this.userId = this.$route.params.userId;
+            this.searchInput = this.$route.params.searchInput;
+            this.searchHandle(1);
+          }
+        }
       }
+    },
+    methods: {
+      searchHandle(pageno){
+        this.curPage = pageno;
+        if (this.searchInput === '') {
+          this.$message.error('请输入搜索内容！')
+        } else {
+          // 显示模块
+          this.showSearchResult = true;
+          this.showInitHot = false;
+
+          let wd = encodeURIComponent(this.searchInput);
+          let url = this.baseUrl + 'book/search?wd=' + wd + '&pageno=' + pageno;
+
+          this.fullscreenLoading = true;
+
+          let _this = this;
+
+          this.$axios.get(url)
+            .then((response) => {
+              let res = response.data;
+              console.log('search response.data ====');
+              console.log(res);
+              if (res['error_code'] === 0) {
+                _this.books = res['data']['list'];
+                _this.$message.success(res['msg']);
+                _this.itemCount = res['data']['page_count'] * 20
+              } else {
+                _this.$message.error(res['msg']);
+              }
+              _this.fullscreenLoading = false;
+            })
+            .catch(function (err) {
+              console.log(err);
+              console.log('searchHandle' + err)
+              _this.$message.error('搜索异常！请重搜！')
+              _this.fullscreenLoading = false;
+            });
+        }
+      },
+      handleCurrentChange(currentPage) {  // 翻页跳转
+        this.searchHandle(currentPage);
+      },
+      handleCollect(item) {
+        if (this.userId === '' || this.userId === null) {
+          this.$message.warning('请先注册/登录系统！')
+        } else {
+          console.log(this.userId);
+          console.log(item.bookId);
+          // 获取书本评价信息
+          this.collectItem['bookId'] = item.bookId;
+          this.collectItem['bookName'] = item.bookName;
+
+          let url = this.baseUrl + 'star/query';
+
+          let params = new URLSearchParams();
+          params.append('userId', this.userId);
+          params.append('bookId', item.bookId);
+
+          let _this = this;
+          this.$axios(
+            {
+              method: 'post',
+              url: url,
+              data: params,
+            }
+          )
+            .then((response) => {
+              let res = response.data;
+              console.log(res)
+
+              if (res['error_code'] === 0) {
+                if (res['data']['starState'] === 1) {  // 用户已评分
+                  _this.hadCollect = true;
+                  _this.valueCollectStarGet = res['data']['star']
+                  _this.collectTime = _this.getLocalTime(res['data']['starTime']);
+
+                } else {    // 用户未评分
+                  _this.hadCollect = false;
+                }
+                _this.collectBookName = item.bookName;
+                _this.dialogCollectVisible = true;
+              } else {
+                _this.$message.error(res['msg']);
+              }
+            })
+            .catch(function (err) {
+              console.log('star query error === ' + err);
+              _this.$message.error('收藏详情操作异常！请重试！');
+            });
+        }
+      },
+      handleCollectCansel(done) {
+        this.dialogCollectVisible = false;
+      },
+      handleCollectSubmit(done) {
+        if (this.hadCollect === true) {
+          this.dialogCollectVisible = false;
+        } else {
+          // 收藏 add api
+          console.log(this.collectItem)
+
+          // api
+          let url = this.baseUrl + 'favor/add';
+          let nowTimeStamp = Math.round(new Date().getTime()/1000);  // 弄成秒级的 10位 的timestamp，数据库int类型 最大是11位
+          let params = new URLSearchParams();
+          params.append('userId', this.userId);
+          params.append('bookId', this.collectItem.bookId);
+          params.append('starNum', this.valueCollectStarSet);
+          params.append('starTime', nowTimeStamp);
+
+          console.log('params ===');
+          console.log(params);
+
+          let _this = this;
+          this.$axios(
+            {
+              method: 'post',
+              url: url,
+              data: params,
+            }
+          )
+            .then((response) => {
+              let res = response.data;
+              console.log(res);
+              if (res['error_code'] === 0) {
+                _this.$message.success(res['msg']);
+                _this.dialogCollectVisible = false;
+              } else {
+                _this.$message.error(res['msg']);
+              }
+            })
+          // 复原
+          this.valueCollectStarSet = 0;
+          this.collectItem.bookId = '';
+          this.collectItem.bookName = '';
+          this.collectItem.starNum = '';
+        }
+      },
+      getLocalTime(tm) {
+        return new Date(tm*1000).toLocaleString().replace(/\//g, "-");
+      },
     }
 
   }
@@ -323,7 +489,9 @@
   .mainContent {
     display: -webkit-flex; /* Safari  chrome */
     display: flex;
+    flex: 5;
     flex-direction: column; /* 方向 树   上到下*/
+    width: 100%;
 
     .search-bar {
       display: -webkit-flex; /* Safari  chrome */
@@ -353,13 +521,14 @@
       }
     }
 
-    .books-hot {
+    .books-hot-init {
       display: -webkit-flex; /* Safari  chrome */
       display: flex;
       flex-direction: row; /* 方向 横   左到右*/
       flex-wrap: wrap; /* 换行 */
-      margin: 5px 5px 0 5px;
+      margin: 5px 5px 30px 5px;
       color: #666;
+      width: 100%;
       .book-item {
         text-align: left;
         margin-bottom: 15px;
@@ -419,6 +588,8 @@
           float: left;
           margin-right: 20px;
           img {
+            min-width: 100px;
+            min-height: 145px;
             max-width: 110px;
             max-height: 160px;
           }
@@ -435,6 +606,11 @@
             .aname {
               color: #3377aa;
               text-decoration: none;
+            }
+            .collect {
+              padding: 1px 4px 1px 4px;
+              margin-left: 30px;
+              color: #ff994b;
             }
           }
           .publi {
@@ -462,11 +638,29 @@
             margin: 6px 0 8px;
             color: #666;
             text-align: left;
+
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
+          .tags {
+            display: -webkit-flex; /* Safari  chrome */
+            display: flex;
+            flex-direction: row; /* 方向 横*/
+            flex-wrap: wrap; /* 不换行 */
+            span {
+              margin: 1px 10px 1px 1px;
+              padding: 1px 5px 1px 5px;
+              background-color: #d1d1d1;
+              color: #37A;
+              font-size: 13px;
+            }
+
           }
         }
       }
     }
-
 
     .page {
       margin: 50px 0 20px 0;
@@ -475,6 +669,7 @@
   }
 
   .hotContent {
+    flex: 2;
     max-width: 500px;
     min-width: 130px;
     /*display: none;*/
@@ -498,13 +693,22 @@
     }
 
     .tags {
-      margin-left: 15px;
-      margin-bottom: 20px;
-      text-align: left;
+      display: -webkit-flex; /* Safari  chrome */
+      display: flex;
+      flex-direction: row; /* 方向 横*/
+      flex-wrap: wrap; /* 换行 */
+      margin-left: 10px;
       .tag-btn {
-        padding-top: 2px;
-        padding-bottom: 2px;
+        padding-top: 0;
+        margin: 1px 10px 5px 1px;
+        span {
+          padding: 1px 5px 1px 5px;
+          background-color: #d1d1d1;
+          color: #37A;
+          font-size: 15px;
+        }
       }
+
     }
 
     .books-hot, .books-recommend {
@@ -517,7 +721,7 @@
       color: #666;
       .book-item {
         text-align: left;
-        margin-bottom: 5px;
+        margin-bottom: 10px;
         .pic {
           width: 70px;
           height: 100px;
@@ -552,8 +756,30 @@
             overflow: hidden;
             text-overflow: ellipsis;
           }
+          .collect {
+            padding: 1px 4px 1px 4px;
+            color: #ff994b;
+            float: right;
+          }
         }
       }
+    }
+  }
+
+  .cbName {
+    color: #F56C6C;;
+  }
+
+  .rate {
+    display: -webkit-flex; /* Safari  chrome */
+    display: flex;
+    flex-direction: row; /* 方向 横*/
+    flex-wrap: nowrap; /* 换行 */
+    justify-content: center;
+
+    span {
+      margin-left: 10px;
+      color: #ff9900;
     }
   }
 

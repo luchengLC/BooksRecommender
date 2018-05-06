@@ -4,7 +4,6 @@
       :default-active="activeIndex2"
       class="el-menu"
       mode="horizontal"
-      @select="handleSelect"
       background-color="#545c64"
       text-color="#ffffff"
       active-text-color="#409EFF" >
@@ -95,7 +94,7 @@ export default {
   data () {
     return {
       fullscreenLoading: false,
-      userId:'',
+      userId:'13411977340',
       userIdTmp:'',
       nickname: '',
       dialogLoginVisible: false,

@@ -30,6 +30,13 @@ def handle_search(request):
     counts = int(dbOptions.search_count(sql_count, wd))  # 查询到对应的总数
     page_count = math.ceil(counts/20)  # python3:/是精确除，然后向上取整。每页20
 
+    # 给每本书 查找 tags
+    for i in range(len(lists)):
+        sql_tag = 'SELECT tagName, bookTagRank FROM br_tags WHERE bookId = %s ORDER BY bookTagRank'
+        result_tags_code, result_tags = dbOptions.tag_query(sql_tag, lists[i]['bookId'])
+        if result_tags_code == 0:
+            lists[i]['tags'] = result_tags
+
     if result_code == 0:
         data = {
             'page_count': page_count,
