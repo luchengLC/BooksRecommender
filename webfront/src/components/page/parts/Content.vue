@@ -588,6 +588,7 @@
       },
       // 根据推荐标签 来搜索
       handleTagSearch(pageno){
+        this.curPage = pageno;
         let wd = this.searchTag;
         this.resultTitle = '标签 “'+wd+ '” 搜索结果';
         console.log('wd ----', wd);
