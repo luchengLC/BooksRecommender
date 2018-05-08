@@ -96,7 +96,7 @@
           <p style="color: rgb(84, 92, 100);" v-if="hadLogin===false"><i class="el-icon-warning"></i> 登录后才能为您推荐！</p>
           <el-button class="tag-btn" type="text" v-for="(i, index2) in tags"
                      :key="i.tags"
-                     v-if="hadLogin===true" @click="handleTagSearch(i.tagName, 1)">
+                     v-if="hadLogin===true" @click="tagSearch(i.tagName, 1)">
              <span class="span-tag">
               {{i.tagName}}</span>
           </el-button>
@@ -239,6 +239,7 @@
         refreshTagBtnLoad: false,
         refreshBookBtnLoad: false,
         resultTitle: '搜索结果',
+        searchTag: '',
         collectItem: {
           bookName: '',
           bookId: '',
@@ -397,7 +398,7 @@
         }
       },
       handleCurrentChange(currentPage) {  // 翻页跳转
-        if (this.resultTitle = '搜索结果') {
+        if (this.resultTitle === '搜索结果') {
           this.searchHandle(currentPage);
         } else {
           this.handleTagSearch(currentPage);
@@ -586,7 +587,8 @@
         }
       },
       // 根据推荐标签 来搜索
-      handleTagSearch(wd, pageno){
+      handleTagSearch(pageno){
+        let wd = this.searchTag;
         this.resultTitle = '标签 “'+wd+ '” 搜索结果';
         console.log('wd ----', wd);
         let url = this.baseUrl + 'rec/tag/search?wd=' + wd + '&pageno=' + pageno;
@@ -615,6 +617,12 @@
             _this.$message.error('搜索异常！请重搜！')
             _this.fullscreenLoading = false;
           });
+      },
+      tagSearch(wd, pageno) {
+          console.log('get tag name'+wd);
+          this.searchTag = wd;
+          console.log('get tag name'+this.searchTag);
+          this.handleTagSearch(pageno)
       }
     }
 

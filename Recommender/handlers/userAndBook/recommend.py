@@ -12,7 +12,6 @@ import random
 
 
 #  标签推荐
-#  啊啊啊啊啊，用什么 算法
 @require_http_methods(["POST"])
 def handle_recommend_tags(request):
     userId = request.POST.get('userId')
@@ -22,7 +21,7 @@ def handle_recommend_tags(request):
     return JsonResponse(package.successPack(ress))
 
 
-# 标签搜索
+#  标签搜索
 @require_http_methods(["GET"])
 def handle_recommend_tags_search(request):
     wd = request.GET.get('wd')
@@ -86,7 +85,7 @@ def deal_recommend_tags(userId):
 
     for i in range(len(list)):
         # 计算权重
-        list[i]['weight'] = list[i]['starNum'] / 2.5 + (10 - list[i]['bookTagRank']) / 10 * math.log(
+        list[i]['weight'] = list[i]['starNum'] / 1.8 + (10 - list[i]['bookTagRank']) / 10 * math.log(
             list[i]['ratingNum'], 2.0) * list[i]['ratingScore'] / 10
 
     # 排序
