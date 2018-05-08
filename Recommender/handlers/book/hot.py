@@ -12,3 +12,4 @@ from Recommender.handlers.util import dbOptions, package
 @require_http_methods(["GET"])
 def handle_hot_query(request):
     pass
+

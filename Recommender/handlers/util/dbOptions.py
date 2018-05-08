@@ -154,6 +154,9 @@ def favor_delete(sql, params):
 '''favor_query'''
 
 
+# 返回的是包装好的数据对象
+
+
 def favor_query(sql, params):
     try:
         db = ''
@@ -206,8 +209,28 @@ def favor_query(sql, params):
         db.commit()
         return 0, res  # 成功
     except Exception as e:
-        print('register  Erorr ===== ', e)
+        print('favor  Erorr ===== ', e)
         return 1, '查询失败'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+''' favor query list  返回的是列表'''
+
+
+def favor_list_query(sql, userId):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, userId)  # 执行
+        lists = cur.fetchall()  # 取得全部
+        return 0, lists
+    except Exception as e:
+        print('tags  Erorr ===== ', e)
+        return 1, '标签推荐处理过程中，喜爱列表处理失败！'
     finally:
         if db != '':
             db.close()  # 关闭连接

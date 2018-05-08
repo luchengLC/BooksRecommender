@@ -1,7 +1,6 @@
 <template>
   <div style="margin: 0; padding: 0">
     <el-menu
-      :default-active="activeIndex2"
       class="el-menu"
       mode="horizontal"
       background-color="#545c64"
@@ -10,12 +9,12 @@
       <el-button class="menu-btn" type="text" id="sysName" @click="loaderMain">图书推荐系统</el-button>
       <el-button class="menu-btn" type="text" id="favor" @click="loaderFavor">{{ btnFavor }}</el-button>
 
-      <el-button class="menu-btn" type="text" id="register" @click="dialogRegisterVisible=true" v-if="isLogin">{{ btnRegister }}
+      <el-button class="menu-btn" type="text" id="register" @click="dialogRegisterVisible=true" v-if="hadLogin===false">{{ btnRegister }}
       </el-button>
-      <el-button class="menu-btn" type="text" id="login" @click="dialogLoginVisible=true" v-if="isLogin">{{ btnLogin }}
+      <el-button class="menu-btn" type="text" id="login" @click="dialogLoginVisible=true" v-if="hadLogin===false">{{ btnLogin }}
       </el-button>
 
-      <el-button class="menu-btn" type="text" id="logout" @click="dialogLogoutVisible=true" v-if="isLogout">{{ btnLogout }}
+      <el-button class="menu-btn" type="text" id="logout" @click="dialogLogoutVisible=true" v-if="hadLogin===true">{{ btnLogout }}
       </el-button>
       <el-button class="menu-btn" type="text" id="name">{{ btnName }}
       </el-button>
@@ -89,6 +88,7 @@
 </template>
 
 <script>
+import bus from '../../../assets/eventBus'
 export default {
   name: 'HelloWorld',
   data () {
@@ -106,8 +106,7 @@ export default {
       btnName: '',
       btnLogout: '退出',
       activeIndex: '',
-      isLogin : true,
-      isLogout : true,
+      hadLogin: false,  // 默认登录状态是未登录
       loginForm: {
         userId: '',
         password: '',
@@ -145,8 +144,7 @@ export default {
       this.fullscreenLoading= false;
       this.btnName= '游客';
       this.nickname= '游客';
-      this.isLogin = true;
-      this.isLogout = false;
+      this.hadLogin = false;
 
     })
   },
@@ -200,15 +198,13 @@ export default {
             data: params
           }).then(function (response) {
             if (response.data.error_code == 0) {
-              _this.isLogout = true;
-              _this.isLogin = false;
+              _this.hadLogin = true;
               _this.btnName = response.data.username;
               _this.name = _this.btnName;
               _this.userId = _this.userIdTmp;
               _this.sendValueToContents();  // 给TopBar传值
             } else  {
-              _this.isLogout = false;
-              _this.isLogin = true;
+              _this.hadLogin = false;
             }
 
             _this.$message.success(response.data.msg);
@@ -247,15 +243,13 @@ export default {
           })
             .then(function (response) {
               if (response.data.error_code == 0) {
-                _this.isLogout = true;
-                _this.isLogin = false;
+                _this.hadLogin = true;
                 _this.btnName = response.data.username;
                 _this.name = _this.btnName;
                 _this.userId = _this.userIdTmp;
                 _this.sendValueToContents();  // 给TopBar传值
               } else  {
-                _this.isLogout = false;
-                _this.isLogin = true;
+                _this.hadLogin = false;
               }
             })
             .catch(function (error) {
@@ -281,8 +275,7 @@ export default {
             // console.log(res);
             _this.btnName = res.username;
             _this.sendValueToContents();  // 给TopBar传值
-            _this.isLogin = true;
-            _this.isLogout = false;
+            _this.hadLogin = false;
 
             _this.dialogLogoutVisible = false;
             _this.fullscreenLoading = false;
@@ -314,8 +307,7 @@ export default {
             _this.username = res.username;
             _this.sendValueToContents();  // 给TopBar传值
             // console.log('改变后username  = '+_this.username)
-            _this.isLogin = false;
-            _this.isLogout = true;
+            _this.hadLogin = true;
           } else {
             // console.log(res['msg']);
           }
@@ -338,7 +330,7 @@ export default {
     },
     sendValueToContents() {
       let _this = this;
-      bus.$emit("getUsername", _this.username);
+      bus.$emit("getUserId", _this.userId);
     }
   },
 }

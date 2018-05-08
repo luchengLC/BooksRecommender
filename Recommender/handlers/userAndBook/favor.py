@@ -36,7 +36,6 @@ def handle_favor_add(request):
 @require_http_methods(["POST"])
 def handle_favor_query(request):
     userId = request.POST.get('userId')
-    # starNum = request.POST.get('starNum')  # sql查询一次，后台分组返回，一次性返回
 
     # 连表查询返回
     sql = 'SELECT userId, favor.bookId, starNum, bookName, subjectUrl, imgUrl, author, pubDate, publisher, ratingScore, ratingNum, price, ISBN, summary  FROM favor INNER JOIN br_books ON favor.bookId = br_books.bookId WHERE userId=%s'

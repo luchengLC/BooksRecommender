@@ -63,13 +63,12 @@
         flex-direction: row; /* 方向 横   左到右*/
         flex-wrap: nowrap; /* 不许换行 */
         justify-content: center;
-        width: 90%;
+        width: 80%;
         .midBig {
           display: -webkit-flex; /* Safari  chrome */
           display: flex;
           flex-direction: row; /* 方向 树   上到下*/
           .contentFavor {
-
           }
         }
       }

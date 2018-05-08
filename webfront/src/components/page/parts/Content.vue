@@ -82,19 +82,36 @@
     <div class="hotContent" v-if="showSearchResult">
       <div style="margin: 50px 0 0 0; padding: 0">
         <!--标签推荐-->
-        <h3 class="right-page-title"><i class="el-icon-menu"></i>标签推荐</h3>
+        <h3 class="right-page-title">
+          <span class="title">
+            <i class="el-icon-menu"></i>
+            标签推荐
+          </span>
+          <el-button type="text" class="refresh-btn" :loading="refreshTagBtnLoad" @click="handleRecommendTags">
+            刷新
+          </el-button>
+        </h3>
+        <!--<el-button type="text" style="margin: 0; padding: 0"></el-button>-->
         <div class="tags">
-
-          <el-button class="tag-btn" type="text" v-for="(i, index2) in tags" :key="i.tags">
+          <p style="color: rgb(84, 92, 100);" v-if="hadLogin===false"><i class="el-icon-warning"></i> 登录后才能为您推荐！</p>
+          <el-button class="tag-btn" type="text" v-for="(i, index2) in tags" :key="i.tags" v-if="hadLogin===true">
              <span class="span-tag">
               {{i.tagName}}</span>
           </el-button>
         </div>
 
         <!--书籍推荐-->
-        <h3 class="right-page-title"><i class="el-icon-menu"></i>书籍推荐</h3>
+        <h3 class="right-page-title">
+          <span class="title">
+            <i class="el-icon-menu"></i>
+            书籍推荐
+          </span>
+          <el-button type="text" class="refresh-btn">刷新</el-button>
+        </h3>
+
         <ul class="books-recommend">
-          <li class="book-item" v-for="(item, index) in bookRec" :key="item.bookId">
+          <p style="color: rgb(84, 92, 100);" v-if="hadLogin===false"><i class="el-icon-warning"></i> 登录后才能为您推荐！</p>
+          <li class="book-item" v-for="(item, index) in bookRec" :key="item.bookId" v-if="hadLogin===true">
             <div class="pic">
               <a target="_blank" class="a" :href="item.bookLink">
                 <img class="img" :src="item.imgUrl" alt=""/>
@@ -117,7 +134,13 @@
         </ul>
 
 
-        <h3 class="right-page-title"><i class="el-icon-menu"></i>HOT</h3>
+        <h3 class="right-page-title">
+          <span class="title">
+            <i class="el-icon-menu"></i>
+            HOT
+          </span>
+        </h3>
+
         <ul class="books-hot">
           <li class="book-item" v-for="(item, index) in hotBooks" :key="item.bookId">
             <div class="pic">
@@ -141,8 +164,6 @@
           </li>
         </ul>
       </div>
-
-
     </div>
 
 
@@ -194,12 +215,14 @@
 
 <script>
   import ElButton from '../../../../node_modules/element-ui/packages/button/src/button'
+  import bus from '../../../assets/eventBus'
   export default {
     components: {ElButton},
     data () {
       return {
         baseUrl: 'http://127.0.0.1:8000/recommend/',
         userId: '13411977340',
+        hadLogin: false,
         value4: "5",
         showSearchResult: false,
         fullscreenLoading: false,
@@ -211,6 +234,8 @@
         hadCollect: false,  // 未评分 控制 显示
         valueCollectStarGet: 0,
         valueCollectStarSet: 0,
+        refreshTagBtnLoad: false,
+        refreshBookBtnLoad: false,
         collectItem: {
           bookName: '',
           bookId: '',
@@ -219,32 +244,7 @@
 
         texts: ['', '极差', '较差', '还行', '推荐', '力荐'],
         books: [],
-        tags: [
-          {
-            tagName: '文学',
-          },
-          {
-            tagName: '政治',
-          },
-          {
-            tagName: '心理学',
-          },
-          {
-            tagName: '编程',
-          },
-          {
-            tagName: '文学',
-          },
-          {
-            tagName: '政治',
-          },
-          {
-            tagName: '心理学',
-          },
-          {
-            tagName: '编程',
-          }
-        ],
+        tags: [],
         hotBooks: [
           {
             bname: '神迹',
@@ -318,9 +318,16 @@
         this.showSearchResult = false;
         this.showInitHot = true;
         this.fullscreenLoading = false;
+        this.refreshTagBtnLoad = false;
+        this.refreshBookBtnLoad = false;
         this.itemCount = 0;
         // hot books api
 
+        this.getValueFromTopBar()  // 获取userId 从TopBar
+        // 标签推荐、 书籍推荐接口
+        this.handleRecommendTags()
+
+//        this.handleRecommendBooks()
       })
     },
     watch: {
@@ -339,6 +346,13 @@
       }
     },
     methods: {
+      getValueFromTopBar() {
+        let _this = this;
+        bus.$on("getUserId", function (userId) {
+          _this.userId = userId;
+        });
+        console.log('当前userId = ' + this.userId);
+      },
       searchHandle(pageno){
         this.curPage = pageno;
         if (this.searchInput === '') {
@@ -431,6 +445,11 @@
       },
       handleCollectCansel(done) {
         this.dialogCollectVisible = false;
+        // 复原
+        this.valueCollectStarSet = 0;
+        this.collectItem.bookId = '';
+        this.collectItem.bookName = '';
+        this.collectItem.starNum = '';
       },
       handleCollectSubmit(done) {
         if (this.hadCollect === true) {
@@ -441,7 +460,7 @@
 
           // api
           let url = this.baseUrl + 'favor/add';
-          let nowTimeStamp = Math.round(new Date().getTime()/1000);  // 弄成秒级的 10位 的timestamp，数据库int类型 最大是11位
+          let nowTimeStamp = Math.round(new Date().getTime() / 1000);  // 弄成秒级的 10位 的timestamp，数据库int类型 最大是11位
           let params = new URLSearchParams();
           params.append('userId', this.userId);
           params.append('bookId', this.collectItem.bookId);
@@ -476,9 +495,86 @@
           this.collectItem.starNum = '';
         }
       },
+      // 得到当前时间的10位timestamp
       getLocalTime(tm) {
-        return new Date(tm*1000).toLocaleString().replace(/\//g, "-");
+        return new Date(tm * 1000).toLocaleString().replace(/\//g, "-");
       },
+      // 标签推荐
+      handleRecommendTags(){
+        if (this.userId === '') {
+          this.hadLogin = false;
+        } else {
+          this.hadLogin = true;
+          let url = this.baseUrl + 'rec/tags';
+
+          let params = new URLSearchParams();
+          params.append('userId', this.userId);
+
+          this.refreshTagBtnLoad = true;
+
+          let _this = this;
+          this.$axios(
+            {
+              method: 'post',
+              url: url,
+              data: params,
+            }
+          )
+            .then((response) => {
+              let res = response.data;
+              if (res['error_code'] === 0) {
+                console.log('标签 --------------- ')
+                console.log(res['data']);
+                _this.tags = res['data'];
+              } else {
+                _this.$message.error(res['msg']);
+              }
+              _this.refreshTagBtnLoad = false;
+            })
+            .catch(function (err) {
+              console.log('tags rec error === ' + err);
+              _this.$message.error('获取推荐标签操作异常！');
+              _this.refreshTagBtnLoad = false;
+            });
+        }
+      },
+      // 书籍推荐
+      handleRecommendBooks(){
+        if (this.userId === '') {
+          this.hadLogin = false;
+        } else {
+          this.hadLogin = true;
+          let url = this.baseUrl + 'rec/books';
+
+          let params = new URLSearchParams();
+          params.append('userId', this.userId);
+
+          this.refreshBookBtnLoad = true;
+
+          let _this = this;
+          this.$axios(
+            {
+              method: 'post',
+              url: url,
+              data: params,
+            }
+          )
+            .then((response) => {
+              let res = response.data;
+              if (res['error_code'] === 0) {
+                _this.tags = res['data'];
+              } else {
+                _this.$message.error(res['msg']);
+              }
+              _this.refreshBookBtnLoad = false;
+            })
+            .catch(function (err) {
+              console.log('tags rec error === ' + err);
+              _this.$message.error('获取推荐书籍操作异常！');
+              _this.refreshBookBtnLoad = false;
+            });
+        }
+      }
     }
 
   }
@@ -511,6 +607,8 @@
     }
 
     .page-title {
+      font-size: 20px;
+      font-weight: bold;
       color: #F56C6C;
       text-align: left;
       padding-top: 5px;
@@ -680,15 +778,25 @@
 
     margin: 20px 0 0 50px;
     .right-page-title {
-      color: #F56C6C;
       text-align: left;
-      font-weight: bold;
       padding-bottom: 3px;
       margin-bottom: 16px;
       margin-left: 15px;
       border-bottom: 1px solid #ddd;
       .el-icon-menu {
         margin-right: 10px;
+      }
+      .title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #F56C6C;
+      }
+      .refresh-btn {
+        float: right;
+        font-size: 14px;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 
@@ -716,12 +824,12 @@
       display: flex;
       flex-direction: row; /* 方向 横   左到右*/
       flex-wrap: wrap; /* 换行 */
-      margin: 5px 5px 0 5px;
-      font-size: 12px;
+      margin: 5px 5px 0 10px;
       color: #666;
       .book-item {
         text-align: left;
         margin-bottom: 10px;
+        font-size: 12px;
         .pic {
           width: 70px;
           height: 100px;

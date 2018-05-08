@@ -10,8 +10,14 @@
       </div>
     </div>
 
-    <h3 class="page-title"><i class="el-icon-menu"></i>我的喜爱列表</h3>
-    <el-button type="text" style="padding: 0; margin: 2px 30px 2px 2px; text-align: right" @click="changeShow">{{showText}}</el-button>
+    <h3 class="page-title">
+      <span class="title">
+        <i class="el-icon-menu"></i>
+        我的喜爱列表
+      </span>
+      <el-button type="text" class="refresh-btn" @click="changeShow">{{showText}}</el-button>
+    </h3>
+
     <el-collapse v-model="activeNames">
       <el-collapse-item name="5">
         <template slot="title">
@@ -260,9 +266,13 @@
     },
     methods: {
       init() {
-        this.fullscreenLoading = true;
-        this.userId = this.$route.params.userId;
-        this.handleGetFavor();
+        let userIdGetTmp = this.$route.params.userId;
+        console.log(userIdGetTmp)
+        if (this.userId !== userIdGetTmp) { // userId不变就不刷新了
+          this.fullscreenLoading = true;
+          this.userId = userIdGetTmp;
+          this.handleGetFavor();
+        }
       },
       handleGetFavor() {
         let params = new URLSearchParams();
@@ -384,13 +394,25 @@
     }
 
     .page-title {
-      color: #F56C6C;
       text-align: left;
       padding-top: 5px;
       border-top: 1px solid #ddd;
       margin-top: 30px;
       .el-icon-menu {
         margin-right: 10px;
+      }
+      .title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #F56C6C;
+      }
+      .refresh-btn {
+        margin-right: 10px;
+        float: right;
+        font-size: 14px;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
 
