@@ -22,6 +22,41 @@ def handle_recommend_tags(request):
     return JsonResponse(package.successPack(ress))
 
 
+# 标签搜索
+@require_http_methods(["GET"])
+def handle_recommend_tags_search(request):
+    wd = request.GET.get('wd')
+    pageno = int(request.GET.get('pageno'))
+
+    # 求对应列表
+    count = (pageno - 1) * 20  # 用于辅助翻页
+    sql_base = 'FROM br_tags LEFT JOIN br_books ON br_tags.bookId = br_books.bookId WHERE br_tags.tagName = %s ORDER BY ratingScore DESC '
+    sql = 'SELECT br_tags.bookId, bookName, subjectUrl, imgUrl, author, pubDate, publisher, ratingScore, ratingNum, price, ISBN, summary '+ sql_base + ' LIMIT '+str(count)+',20;'
+    lists = []  # 返回的参数列表
+    result_code, lists = dbOptions.search(sql, wd)
+
+
+    sql_count = 'SELECT COUNT(br_tags.bookId) AS num '+sql_base
+    counts = int(dbOptions.search_count(sql_count, wd))  # 查询到对应的总数
+    page_count = math.ceil(counts / 20)  # python3:/是精确除，然后向上取整。每页20
+
+    # 给每本书 查找 tags
+    for i in range(len(lists)):
+        sql_tag = 'SELECT tagName, bookTagRank FROM br_tags WHERE bookId = %s ORDER BY bookTagRank'
+        result_tags_code, result_tags = dbOptions.tag_query(sql_tag, lists[i]['bookId'])
+        if result_tags_code == 0:
+            lists[i]['tags'] = result_tags
+
+    if result_code == 0:
+        data = {
+            'page_count': page_count,
+            'list': lists
+        }
+        return JsonResponse(package.successPack(data))
+    else:
+        return JsonResponse(package.errorPack(lists[0]))
+
+
 #  啊啊啊啊啊，用什么 算法
 @require_http_methods(["GET"])
 def handle_recommend_books(request):

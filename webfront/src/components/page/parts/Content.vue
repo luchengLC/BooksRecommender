@@ -32,7 +32,7 @@
         </li>
       </ul>
       <!--搜索 结果 书表-->
-      <h3 class="page-title" v-if="showSearchResult"><i class="el-icon-menu"></i>搜索结果</h3>
+      <h3 class="page-title" v-if="showSearchResult"><i class="el-icon-menu"></i>{{resultTitle}}</h3>
       <ul class="books-container" v-if="showSearchResult">
         <li class="book-item" v-for="(item, index) in books" :key="item.bookId">
           <div class="pic">
@@ -94,7 +94,9 @@
         <!--<el-button type="text" style="margin: 0; padding: 0"></el-button>-->
         <div class="tags">
           <p style="color: rgb(84, 92, 100);" v-if="hadLogin===false"><i class="el-icon-warning"></i> 登录后才能为您推荐！</p>
-          <el-button class="tag-btn" type="text" v-for="(i, index2) in tags" :key="i.tags" v-if="hadLogin===true">
+          <el-button class="tag-btn" type="text" v-for="(i, index2) in tags"
+                     :key="i.tags"
+                     v-if="hadLogin===true" @click="handleTagSearch(i.tagName, 1)">
              <span class="span-tag">
               {{i.tagName}}</span>
           </el-button>
@@ -236,6 +238,7 @@
         valueCollectStarSet: 0,
         refreshTagBtnLoad: false,
         refreshBookBtnLoad: false,
+        resultTitle: '搜索结果',
         collectItem: {
           bookName: '',
           bookId: '',
@@ -320,6 +323,7 @@
         this.fullscreenLoading = false;
         this.refreshTagBtnLoad = false;
         this.refreshBookBtnLoad = false;
+        this.resultTitle = '搜索结果';
         this.itemCount = 0;
         // hot books api
 
@@ -361,6 +365,7 @@
           // 显示模块
           this.showSearchResult = true;
           this.showInitHot = false;
+          this.resultTitle = '搜索结果';
 
           let wd = encodeURIComponent(this.searchInput);
           let url = this.baseUrl + 'book/search?wd=' + wd + '&pageno=' + pageno;
@@ -392,7 +397,12 @@
         }
       },
       handleCurrentChange(currentPage) {  // 翻页跳转
-        this.searchHandle(currentPage);
+        if (this.resultTitle = '搜索结果') {
+          this.searchHandle(currentPage);
+        } else {
+          this.handleTagSearch(currentPage);
+        }
+
       },
       handleCollect(item) {
         if (this.userId === '' || this.userId === null) {
@@ -574,6 +584,37 @@
               _this.refreshBookBtnLoad = false;
             });
         }
+      },
+      // 根据推荐标签 来搜索
+      handleTagSearch(wd, pageno){
+        this.resultTitle = '标签 “'+wd+ '” 搜索结果';
+        console.log('wd ----', wd);
+        let url = this.baseUrl + 'rec/tag/search?wd=' + wd + '&pageno=' + pageno;
+
+        this.fullscreenLoading = true;
+
+        let _this = this;
+
+        this.$axios.get(url)
+          .then((response) => {
+            let res = response.data;
+            console.log('tags search response.data ====');
+            console.log(res);
+            if (res['error_code'] === 0) {
+              _this.books = res['data']['list'];
+              _this.$message.success(res['msg']);
+              _this.itemCount = res['data']['page_count'] * 20
+            } else {
+              _this.$message.error(res['msg']);
+            }
+            _this.fullscreenLoading = false;
+          })
+          .catch(function (err) {
+            console.log(err);
+            console.log('searchHandle' + err)
+            _this.$message.error('搜索异常！请重搜！')
+            _this.fullscreenLoading = false;
+          });
       }
     }
 
