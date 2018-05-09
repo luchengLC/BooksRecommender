@@ -353,3 +353,58 @@ def tag_query(sql, bookId):
     finally:
         if db != '':
             db.close()  # 关闭连接
+
+
+def favor_all_query(sql, userId):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql)
+        result = cur.fetchall()
+        return 0, result
+    except Exception as e:
+        print('favor all query  Erorr ===== ', e)
+        return 1, ''
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def cf_rec_query(sql, dic):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        res = []
+        for k, v in dic.items():
+            print(k)
+            print(v)
+            cur.execute(sql, k)
+            resTmp = cur.fetchall()
+            print(resTmp)
+            tmp = {
+                'bookId': resTmp[0][0],
+                'bookName': resTmp[0][1],
+                'subjectUrl': resTmp[0][2],
+                'imgUrl': resTmp[0][3],
+                'author': resTmp[0][4],
+                'pubDate': resTmp[0][5],
+                'publisher': resTmp[0][6],
+                'ratingScore': resTmp[0][7],
+                'ratingNum': resTmp[0][8],
+                'price': resTmp[0][9],
+                'ISBN': resTmp[0][10],
+                'summary': resTmp[0][11],
+                'recCoefficient': v,
+            }
+            res.append(tmp)
+        return 0, res
+    except Exception as e:
+        print('query rec list msg Erorr ===== ', e)
+        return 1, 'item-CF获取推荐列表出错！'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接

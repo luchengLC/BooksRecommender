@@ -29,7 +29,7 @@
       :before-close="handleLoginCansel">
       <el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="90px">
         <el-form-item label="账号" prop="userId">
-          <el-input type="text" v-model="loginForm.userId" placeholder="手机号码..."></el-input>
+          <el-input type="text" v-model="loginForm.userId" placeholder="6-18位数字字母组合..."></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input type="password" v-model="loginForm.password" placeholder="密码..."></el-input>
@@ -50,7 +50,7 @@
       :before-close="handleRegisterCansel">
       <el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="90px">
         <el-form-item label="账号" prop="userId">
-          <el-input v-model="loginForm.userId" placeholder="手机号码..."></el-input>
+          <el-input v-model="loginForm.userId" placeholder="18位数字字母组合..."></el-input>
         </el-form-item>
         <el-form-item label="昵称" prop="nickname">
           <el-input v-model="loginForm.nickname" placeholder="昵称..."></el-input>
@@ -116,8 +116,9 @@ export default {
       registerForm: {},
       rules: {
         userId: [
-          {required: true, message: '请输入账号（手机号码）', trigger: 'blur'},
-          {pattern: /^0?(13[0-9]|[15[7-9]|153|156|18[7-9])[0-9]{8}$/, message: '请正确地输入账号（手机号码）', trigger: 'blur'}
+          {required: true, message: '请输入账号', trigger: 'blur'},
+//          {pattern: /^[a-zA-Z](\w){5,17}$/, message: '以字母开头，长度在6-18之间， 只能包含字符、数字和下划线', trigger: 'blur'}
+          {pattern: /^(\w){6,18}$/, message: '6-18个字母、数字、下划线组合', trigger: 'blur'}
         ],
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'},

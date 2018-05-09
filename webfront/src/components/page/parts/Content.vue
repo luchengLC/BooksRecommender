@@ -15,13 +15,13 @@
       <ul class="books-hot-init" v-if="showInitHot">
         <li class="book-item" v-for="(item, index) in hotBooks" :key="item.bookId">
           <div class="pic">
-            <a target="_blank" class="a" :href="item.bookLink">
+            <a target="_blank" class="a" :href="item.subjectUrl">
               <img class="img" :src="item.imgUrl" alt=""/>
             </a>
           </div>
           <div class="info">
             <div class="title">
-              <a target="_blank" class="a" :href="item.bookLink">
+              <a target="_blank" class="a" :href="item.subjectUrl">
                 {{item.bname}}
               </a>
             </div>
@@ -56,9 +56,10 @@
             </div>
             <p class="brief">{{item.summary}}</p>
             <div class="tags">
-              <span class="span-tag"
-                    v-for="(i, index2) in item.tags" :key="i.tags">
-              {{i.tagName}}</span>
+              <el-button class="tag-btn" type="text" v-for="(i, index2) in item.tags" :key="i.tags"
+                         @click="tagSearch(i.tagName, 1)">
+                <span class="span-tag">{{i.tagName}}</span>
+              </el-button>
             </div>
 
           </div>
@@ -90,6 +91,11 @@
           <el-button type="text" class="refresh-btn" :loading="refreshTagBtnLoad" @click="handleRecommendTags">
             刷新
           </el-button>
+
+          <!--<el-button type="text" class="refresh-btn" :loading="chooceMany" style="margin: 0 5px;">-->
+            <!--多选-->
+          <!--</el-button>-->
+
         </h3>
         <!--<el-button type="text" style="margin: 0; padding: 0"></el-button>-->
         <div class="tags">
@@ -115,20 +121,20 @@
           <p style="color: rgb(84, 92, 100);" v-if="hadLogin===false"><i class="el-icon-warning"></i> 登录后才能为您推荐！</p>
           <li class="book-item" v-for="(item, index) in bookRec" :key="item.bookId" v-if="hadLogin===true">
             <div class="pic">
-              <a target="_blank" class="a" :href="item.bookLink">
-                <img class="img" :src="item.imgUrl" alt=""/>
+              <a target="_blank" class="a" :href="item.subjectUrl">
+                <img class="img" :src="item.imgUrl" :alt="item.bookName"/>
               </a>
             </div>
             <div class="info">
               <div class="title">
-                <a target="_blank" class="a" :href="item.bookLink">
-                  {{item.bname}}
+                <a target="_blank" class="a" :href="item.subjectUrl">
+                  {{item.bookName}}
                 </a>
               </div>
               <div class="author">
                 {{item.author}}
               </div>
-              <el-button class="collect" type="primary" plain size="medium">
+              <el-button class="collect" type="primary" plain size="medium" @click="handleCollect(item)">
                 收藏
               </el-button>
             </div>
@@ -146,20 +152,20 @@
         <ul class="books-hot">
           <li class="book-item" v-for="(item, index) in hotBooks" :key="item.bookId">
             <div class="pic">
-              <a target="_blank" class="a" :href="item.bookLink">
+              <a target="_blank" class="a" :href="item.subjectUrl">
                 <img class="img" :src="item.imgUrl" alt=""/>
               </a>
             </div>
             <div class="info">
               <div class="title">
-                <a target="_blank" class="a" :href="item.bookLink">
-                  {{item.bname}}
+                <a target="_blank" class="a" :href="item.subjectUrl">
+                  {{item.bookName}}
                 </a>
               </div>
               <div class="author">
                 {{item.author}}
               </div>
-              <el-button class="collect" type="primary" plain size="medium">
+              <el-button class="collect" type="primary" plain size="medium" @click="handleCollect(item)">
                 收藏
               </el-button>
             </div>
@@ -251,33 +257,33 @@
         tags: [],
         hotBooks: [
           {
-            bname: '神迹',
-            bookLink: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
+            bookName: '神迹',
+            subjectUrl: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
             imgUrl: 'https://img1.doubanio.com/mpic/s29708619.jpg',
             author: '[爱尔兰] 爱玛·多诺霍'
           },
           {
-            bname: '蟹之进行曲1',
-            bookLink: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
+            bookName: '蟹之进行曲1',
+            subjectUrl: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
             imgUrl: 'https://img3.doubanio.com/mpic/s29517015.jpg',
             author: '[法] 阿尔蒂尔·德·潘'
           },
 
           {
-            bname: '植物花卉插画图案集',
-            bookLink: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
+            bookName: '植物花卉插画图案集',
+            subjectUrl: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
             imgUrl: 'https://img3.doubanio.com/mpic/s29708071.jpg',
             author: '[英] 鲍伊风尚'
           },
           {
-            bname: '神迹',
-            bookLink: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
+            bookName: '神迹',
+            subjectUrl: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
             imgUrl: 'https://img1.doubanio.com/mpic/s29708619.jpg',
             author: '[爱尔兰] 爱玛·多诺霍'
           },
           {
-            bname: '啊！这样就能辞职了',
-            bookLink: 'https://book.douban.com/subject/27201290/?icn=index-editionrecommend',
+            bookName: '啊！这样就能辞职了',
+            subjectUrl: 'https://book.douban.com/subject/27201290/?icn=index-editionrecommend',
             imgUrl: 'https://img3.doubanio.com/mpic/s29669694.jpg',
             author: '[日] 安倍夜郎'
           },
@@ -285,32 +291,32 @@
         ],
         bookRec: [
           {
-            bname: '神迹',
-            bookLink: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
+            bookName: '神迹',
+            subjectUrl: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
             imgUrl: 'https://img1.doubanio.com/spic/s29708619.jpg',
             author: '[爱尔兰] 爱玛·多诺霍'
           },
           {
-            bname: '植物花卉插画图案集',
-            bookLink: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
+            bookName: '植物花卉插画图案集',
+            subjectUrl: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
             imgUrl: 'https://img3.doubanio.com/spic/s29708071.jpg',
             author: '[英] 鲍伊风尚'
           },
           {
-            bname: '蟹之进行曲1',
-            bookLink: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
+            bookName: '蟹之进行曲1',
+            subjectUrl: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
             imgUrl: 'https://img3.doubanio.com/spic/s29517015.jpg',
             author: '[法] 阿尔蒂尔·德·潘'
           },
           {
-            bname: '植物花卉插画图案集',
-            bookLink: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
+            bookName: '植物花卉插画图案集',
+            subjectUrl: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
             imgUrl: 'https://img3.doubanio.com/spic/s29708071.jpg',
             author: '[英] 鲍伊风尚'
           },
           {
-            bname: '蟹之进行曲1',
-            bookLink: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
+            bookName: '蟹之进行曲1',
+            subjectUrl: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
             imgUrl: 'https://img3.doubanio.com/spic/s29517015.jpg',
             author: '[法] 阿尔蒂尔·德·潘'
           },
@@ -549,6 +555,45 @@
             });
         }
       },
+      // 根据推荐标签 来搜索
+      handleTagSearch(pageno){
+        this.curPage = pageno;
+        let wd = this.searchTag;
+        this.resultTitle = '标签 “' + wd + '” 搜索结果';
+        console.log('wd ----', wd);
+        let url = this.baseUrl + 'rec/tag/search?wd=' + wd + '&pageno=' + pageno;
+
+        this.fullscreenLoading = true;
+
+        let _this = this;
+
+        this.$axios.get(url)
+          .then((response) => {
+            let res = response.data;
+            console.log('tags search response.data ====');
+            console.log(res);
+            if (res['error_code'] === 0) {
+              _this.books = res['data']['list'];
+              _this.$message.success(res['msg']);
+              _this.itemCount = res['data']['page_count'] * 20
+            } else {
+              _this.$message.error(res['msg']);
+            }
+            _this.fullscreenLoading = false;
+          })
+          .catch(function (err) {
+            console.log(err);
+            console.log('searchHandle' + err)
+            _this.$message.error('搜索异常！请重搜！')
+            _this.fullscreenLoading = false;
+          });
+      },
+      tagSearch(wd, pageno) {
+        console.log('get tag name' + wd);
+        this.searchTag = wd;
+        console.log('get tag name' + this.searchTag);
+        this.handleTagSearch(pageno)
+      },
       // 书籍推荐
       handleRecommendBooks(){
         if (this.userId === '') {
@@ -586,45 +631,6 @@
             });
         }
       },
-      // 根据推荐标签 来搜索
-      handleTagSearch(pageno){
-        this.curPage = pageno;
-        let wd = this.searchTag;
-        this.resultTitle = '标签 “'+wd+ '” 搜索结果';
-        console.log('wd ----', wd);
-        let url = this.baseUrl + 'rec/tag/search?wd=' + wd + '&pageno=' + pageno;
-
-        this.fullscreenLoading = true;
-
-        let _this = this;
-
-        this.$axios.get(url)
-          .then((response) => {
-            let res = response.data;
-            console.log('tags search response.data ====');
-            console.log(res);
-            if (res['error_code'] === 0) {
-              _this.books = res['data']['list'];
-              _this.$message.success(res['msg']);
-              _this.itemCount = res['data']['page_count'] * 20
-            } else {
-              _this.$message.error(res['msg']);
-            }
-            _this.fullscreenLoading = false;
-          })
-          .catch(function (err) {
-            console.log(err);
-            console.log('searchHandle' + err)
-            _this.$message.error('搜索异常！请重搜！')
-            _this.fullscreenLoading = false;
-          });
-      },
-      tagSearch(wd, pageno) {
-          console.log('get tag name'+wd);
-          this.searchTag = wd;
-          console.log('get tag name'+this.searchTag);
-          this.handleTagSearch(pageno)
-      }
     }
 
   }
@@ -797,12 +803,16 @@
             display: flex;
             flex-direction: row; /* 方向 横*/
             flex-wrap: wrap; /* 不换行 */
-            span {
-              margin: 1px 10px 1px 1px;
-              padding: 1px 5px 1px 5px;
-              background-color: #d1d1d1;
-              color: #37A;
-              font-size: 13px;
+
+            .tag-btn {
+              padding-top: 0;
+              margin: 1px 2px 1px 1px;
+              span {
+                padding: 1px 5px 1px 5px;
+                background-color: #d1d1d1;
+                color: #37A;
+                font-size: 13px;
+              }
             }
 
           }

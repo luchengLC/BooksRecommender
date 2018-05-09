@@ -21,6 +21,9 @@ def handle_register(request):
         'nickname': nickname,
         'email': email
     }
+
+    # TO DO
+    # insert 之前 先查询一下有没有该账号
     sql = 'INSERT INTO users(userId, password, nickname, email) VALUES(%s,%s,%s,%s)'
 
     result_code, result = dbOptions.register_insert(sql, msg)

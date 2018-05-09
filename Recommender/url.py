@@ -51,4 +51,5 @@ urlpatterns = [
     # 推荐
     url(r'rec/tags', recommend.handle_recommend_tags),
     url(r'rec/tag/search', recommend.handle_recommend_tags_search),
+    url(r'rec/books', recommend.handle_recommend_books),
 ]
