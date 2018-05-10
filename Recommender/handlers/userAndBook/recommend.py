@@ -9,22 +9,22 @@ from Recommender.handlers.util import dbOptions, package
 import operator
 from collections import OrderedDict
 import random
+# 定时任务 插件
+# from apscheduler.schedulers import
 
 
 ''' 
     TO DO
     三条线程
     分别处理
-    标签推荐
-    item cf 书籍推荐
-    基于内容 书籍推荐
+    标签推荐              TO DO：1. 时间权重的处理
+    item cf 书籍推荐      TO DO：1. 推荐原因，需要； 2.存储在数据库，设计每天更新一次  3.时间权重的处理
+    基于内容 书籍推荐      TO DO：1. all
+    
 '''
 
 
-
 #  标签推荐
-#  TO DO
-#  少了 时间 的权重
 @require_http_methods(["POST"])
 def handle_recommend_tags(request):
     userId = request.POST.get('userId')
@@ -34,8 +34,8 @@ def handle_recommend_tags(request):
         ress = random.sample(res, 10)
     else:
         ress = random.sample(res, len(res))
-    for i in ress:
-        print(i['weight'], '****', i['tagName'])
+    # for i in ress:
+        # print(i['weight'], '****', i['tagName'])
     return JsonResponse(package.successPack(ress))
 
 
@@ -73,7 +73,7 @@ def handle_recommend_tags_search(request):
     else:
         return JsonResponse(package.errorPack(lists[0]))
 
-
+#  处理 标签推荐
 def deal_recommend_tags(userId):
     sql = 'SELECT favor.bookId, bookName,starNum, ratingScore, ratingNum, bookTagRank, tagName FROM favor, br_books, br_tags WHERE favor.userId = %s AND br_books.bookId = favor.bookId AND br_tags.bookId = favor.bookId ORDER BY bookId, bookTagRank'
     result_code, result = dbOptions.favor_list_query(sql, userId)
@@ -109,7 +109,7 @@ def deal_recommend_tags(userId):
         b.setdefault(item['tagName'], {**item, 'freq': 0})['freq'] += 1
 
     for k, v in b.items():
-        print(v['weight'], ' ==== ', v['tagName'])
+        # print(v['weight'], ' ==== ', v['tagName'])
         tmp = {
             'tagName': v['tagName'],
             'weight': v['weight'],
@@ -138,7 +138,7 @@ def handle_recommend_books(request):
     ress = CFRecommend(res, userId, W)
 
     # 到数据库去查询被推荐的书籍信息
-    rec_sql = 'SELECT bookId, bookName, subjectUrl, imgUrl, author, pubDate, publisher, ratingScore, ratingNum, price, ISBN, summary FROM br_books WHERE bookId = %s'
+    rec_sql = 'SELECT bookId, bookName, subjectUrl, imgUrl, author FROM br_books WHERE bookId = %s'
     rec_code, rec_res = dbOptions.cf_rec_query(rec_sql, ress)
     if rec_code == 0:
         list = {

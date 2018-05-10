@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url
 from Recommender.handlers.user import register, logout, login, home, info
-from Recommender.handlers.book import search,detail
+from Recommender.handlers.book import search,detail,hot
 from Recommender.handlers.userAndBook import favor, recommend
 
 
@@ -36,7 +36,7 @@ urlpatterns = [
     # 书本
     url(r'book/search', search.handle_search),
     # url(r'book/hot', info.handle_logout),
-    url(r'book/detail', detail.handle_book_detail),
+    # url(r'book/detail', detail.handle_book_detail),
 
 
     # 喜爱列表
@@ -52,4 +52,9 @@ urlpatterns = [
     url(r'rec/tags', recommend.handle_recommend_tags),
     url(r'rec/tag/search', recommend.handle_recommend_tags_search),
     url(r'rec/books', recommend.handle_recommend_books),
+
+
+    url(r'book/hot', hot.handle_hot_query),
+
+
 ]

@@ -22,12 +22,15 @@
           <div class="info">
             <div class="title">
               <a target="_blank" class="a" :href="item.subjectUrl">
-                {{item.bname}}
+                {{item.bookName}}
               </a>
             </div>
             <div class="author">
               {{item.author}}
             </div>
+            <el-button class="collect" type="primary" plain size="medium" @click="handleCollect(item)">
+              收藏
+            </el-button>
           </div>
         </li>
       </ul>
@@ -93,7 +96,7 @@
           </el-button>
 
           <!--<el-button type="text" class="refresh-btn" :loading="chooceMany" style="margin: 0 5px;">-->
-            <!--多选-->
+          <!--多选-->
           <!--</el-button>-->
 
         </h3>
@@ -114,7 +117,9 @@
             <i class="el-icon-menu"></i>
             书籍推荐
           </span>
-          <el-button type="text" class="refresh-btn">刷新</el-button>
+          <el-button type="text" class="refresh-btn" :loading="refreshBookBtnLoad" @click="handleRecommendBooks">
+            刷新
+          </el-button>
         </h3>
 
         <ul class="books-recommend">
@@ -122,12 +127,12 @@
           <li class="book-item" v-for="(item, index) in bookRec" :key="item.bookId" v-if="hadLogin===true">
             <div class="pic">
               <a target="_blank" class="a" :href="item.subjectUrl">
-                <img class="img" :src="item.imgUrl" :alt="item.bookName"/>
+                <img class="img" :src="item.imgUrl" :alt="item.bookName" title="跟您喜好相似的用户也喜欢这本"/>
               </a>
             </div>
             <div class="info">
               <div class="title">
-                <a target="_blank" class="a" :href="item.subjectUrl">
+                <a target="_blank" class="a" :href="item.subjectUrl" :title="item.bookName">
                   {{item.bookName}}
                 </a>
               </div>
@@ -255,72 +260,8 @@
         texts: ['', '极差', '较差', '还行', '推荐', '力荐'],
         books: [],
         tags: [],
-        hotBooks: [
-          {
-            bookName: '神迹',
-            subjectUrl: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
-            imgUrl: 'https://img1.doubanio.com/mpic/s29708619.jpg',
-            author: '[爱尔兰] 爱玛·多诺霍'
-          },
-          {
-            bookName: '蟹之进行曲1',
-            subjectUrl: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29517015.jpg',
-            author: '[法] 阿尔蒂尔·德·潘'
-          },
-
-          {
-            bookName: '植物花卉插画图案集',
-            subjectUrl: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29708071.jpg',
-            author: '[英] 鲍伊风尚'
-          },
-          {
-            bookName: '神迹',
-            subjectUrl: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
-            imgUrl: 'https://img1.doubanio.com/mpic/s29708619.jpg',
-            author: '[爱尔兰] 爱玛·多诺霍'
-          },
-          {
-            bookName: '啊！这样就能辞职了',
-            subjectUrl: 'https://book.douban.com/subject/27201290/?icn=index-editionrecommend',
-            imgUrl: 'https://img3.doubanio.com/mpic/s29669694.jpg',
-            author: '[日] 安倍夜郎'
-          },
-
-        ],
-        bookRec: [
-          {
-            bookName: '神迹',
-            subjectUrl: 'https://book.douban.com/subject/27600501/?icn=index-editionrecommend',
-            imgUrl: 'https://img1.doubanio.com/spic/s29708619.jpg',
-            author: '[爱尔兰] 爱玛·多诺霍'
-          },
-          {
-            bookName: '植物花卉插画图案集',
-            subjectUrl: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
-            imgUrl: 'https://img3.doubanio.com/spic/s29708071.jpg',
-            author: '[英] 鲍伊风尚'
-          },
-          {
-            bookName: '蟹之进行曲1',
-            subjectUrl: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
-            imgUrl: 'https://img3.doubanio.com/spic/s29517015.jpg',
-            author: '[法] 阿尔蒂尔·德·潘'
-          },
-          {
-            bookName: '植物花卉插画图案集',
-            subjectUrl: 'https://book.douban.com/subject/30162092/?icn=index-editionrecommend',
-            imgUrl: 'https://img3.doubanio.com/spic/s29708071.jpg',
-            author: '[英] 鲍伊风尚'
-          },
-          {
-            bookName: '蟹之进行曲1',
-            subjectUrl: 'https://book.douban.com/subject/27113959/?icn=index-latestbook-subject',
-            imgUrl: 'https://img3.doubanio.com/spic/s29517015.jpg',
-            author: '[法] 阿尔蒂尔·德·潘'
-          },
-        ]
+        hotBooks: [],
+        bookRec: []
       }
     },
     mounted: function () {
@@ -333,12 +274,12 @@
         this.resultTitle = '搜索结果';
         this.itemCount = 0;
         // hot books api
+        this.handleHotBooks()
 
         this.getValueFromTopBar()  // 获取userId 从TopBar
         // 标签推荐、 书籍推荐接口
         this.handleRecommendTags()
-
-//        this.handleRecommendBooks()
+        this.handleRecommendBooks()
       })
     },
     watch: {
@@ -617,8 +558,10 @@
           )
             .then((response) => {
               let res = response.data;
+              console.log('书籍推荐 -------------- ');
               if (res['error_code'] === 0) {
-                _this.tags = res['data'];
+                console.log(res['data']);
+                _this.bookRec = res['data']['list'];
               } else {
                 _this.$message.error(res['msg']);
               }
@@ -631,6 +574,31 @@
             });
         }
       },
+      // 热门书籍
+      handleHotBooks(){
+        this.fullscreenLoading = true;
+        let url = this.baseUrl + 'book/hot';
+        let _this = this;
+        this.$axios.get(url)
+          .then((response) => {
+            let res = response.data;
+            console.log('hot books response.data ====');
+            console.log(res);
+            if (res['error_code'] === 0) {
+              _this.hotBooks = res['data']['list'];
+//              _this.$message.success(res['msg']);
+            } else {
+              console.log(res['msg']);
+//              _this.$message.error(res['msg']);
+            }
+            _this.fullscreenLoading = false;
+          })
+          .catch(function (err) {
+            console.log(err);
+            _this.$message.error('热门列表获取异常！')
+            _this.fullscreenLoading = false;
+          });
+      }
     }
 
   }
@@ -693,6 +661,8 @@
             color: #3377aa;
             text-decoration: none;
             .img {
+              min-width: 100px;
+              min-height: 145px;
               max-height: 160px;
               max-width: 105px;
             }
@@ -714,11 +684,17 @@
               text-decoration: none;
             }
           }
+
           .author {
             width: 105px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+          }
+          .collect {
+            padding: 1px 4px 1px 4px;
+            color: #ff994b;
+            float: right;
           }
         }
       }

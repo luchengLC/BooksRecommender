@@ -391,13 +391,13 @@ def cf_rec_query(sql, dic):
                 'subjectUrl': resTmp[0][2],
                 'imgUrl': resTmp[0][3],
                 'author': resTmp[0][4],
-                'pubDate': resTmp[0][5],
-                'publisher': resTmp[0][6],
-                'ratingScore': resTmp[0][7],
-                'ratingNum': resTmp[0][8],
-                'price': resTmp[0][9],
-                'ISBN': resTmp[0][10],
-                'summary': resTmp[0][11],
+                # 'pubDate': resTmp[0][5],
+                # 'publisher': resTmp[0][6],
+                # 'ratingScore': resTmp[0][7],
+                # 'ratingNum': resTmp[0][8],
+                # 'price': resTmp[0][9],
+                # 'ISBN': resTmp[0][10],
+                # 'summary': resTmp[0][11],
                 'recCoefficient': v,
             }
             res.append(tmp)
@@ -405,6 +405,33 @@ def cf_rec_query(sql, dic):
     except Exception as e:
         print('query rec list msg Erorr ===== ', e)
         return 1, 'item-CF获取推荐列表出错！'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def hot_query(sql):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql)
+        res = cur.fetchall()
+        ress = []
+        for i in res:
+            tmp = {
+                'bookId': i[0],
+                'bookName':i[1],
+                'subjectUrl': i[2],
+                'imgUrl': i[3],
+                'author': i[4],
+            }
+            ress.append(tmp)
+        return 0, ress
+    except Exception as e:
+        print('query hot list Erorr ===== ', e)
+        return 1, '获取热门书籍列表异常！'
     finally:
         if db != '':
             db.close()  # 关闭连接
