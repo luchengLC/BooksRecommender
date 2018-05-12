@@ -38,6 +38,7 @@
       <h3 class="page-title" v-if="showSearchResult"><i class="el-icon-menu"></i>{{resultTitle}}</h3>
       <ul class="books-container" v-if="showSearchResult">
         <li class="book-item" v-for="(item, index) in books" :key="item.bookId">
+          <!--<span>index</span>-->
           <div class="pic">
             <a target="_blank" :href="item.subjectUrl" :title="item.bookName">
               <img :src="item.imgUrl" :alt="item.bookName">
@@ -76,7 +77,7 @@
           @current-change="handleCurrentChange"
           background
           layout="prev, pager, next"
-          :page-size="20"
+          :page-size="15"
           :total="itemCount">
         </el-pagination>
       </div>
@@ -127,7 +128,7 @@
           <li class="book-item" v-for="(item, index) in bookRec" :key="item.bookId" v-if="hadLogin===true">
             <div class="pic">
               <a target="_blank" class="a" :href="item.subjectUrl">
-                <img class="img" :src="item.imgUrl" :alt="item.bookName" title="跟您喜好相似的用户也喜欢这本"/>
+                <img class="img" :src="item.imgUrl" :alt="item.bookName" :title="item.reason"/>
               </a>
             </div>
             <div class="info">
@@ -330,7 +331,7 @@
               if (res['error_code'] === 0) {
                 _this.books = res['data']['list'];
                 _this.$message.success(res['msg']);
-                _this.itemCount = res['data']['page_count'] * 20
+                _this.itemCount = res['data']['page_count'] * 15
               } else {
                 _this.$message.error(res['msg']);
               }
@@ -516,7 +517,7 @@
             if (res['error_code'] === 0) {
               _this.books = res['data']['list'];
               _this.$message.success(res['msg']);
-              _this.itemCount = res['data']['page_count'] * 20
+              _this.itemCount = res['data']['page_count'] * 15
             } else {
               _this.$message.error(res['msg']);
             }

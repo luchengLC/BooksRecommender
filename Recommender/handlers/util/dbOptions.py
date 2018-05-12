@@ -1,3 +1,5 @@
+import random
+
 import pymysql
 
 '''模糊查询 书籍列表'''
@@ -355,7 +357,8 @@ def tag_query(sql, bookId):
             db.close()  # 关闭连接
 
 
-def favor_all_query(sql, userId):
+# 查询全部喜爱列表
+def favor_all_query(sql):
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -422,16 +425,159 @@ def hot_query(sql):
         for i in res:
             tmp = {
                 'bookId': i[0],
-                'bookName':i[1],
+                'bookName': i[1],
                 'subjectUrl': i[2],
                 'imgUrl': i[3],
                 'author': i[4],
+                # 'ratingNum': int(i[5])
             }
             ress.append(tmp)
         return 0, ress
+
     except Exception as e:
         print('query hot list Erorr ===== ', e)
         return 1, '获取热门书籍列表异常！'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def cf_insert_update(list):
+    '''
+    INSERT INTO item_cf_similar(bookId1, bookId2, similar) VALUES(%s,%s,%s) ON DUPLICATE KEY UPDATE bookId1=%s,bookId2=%s;
+    :param list: 
+    :return: 
+    '''
+    sql = 'INSERT INTO item_cf_similar(bookId1, bookId2, similar) VALUES(%s,%s,%s) ON DUPLICATE KEY UPDATE bookId1=%s,bookId2=%s,similar=%s'
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        for i in list:
+            cur.execute(sql, (i['bookId1'], i['bookId2'], i['similar'], i['bookId1'], i['bookId2'], i['similar']))
+            db.commit()
+        return 0, 'success'
+    except Exception as e:
+        print('query hot list Erorr ===== ', e)
+        return 1, '插入cf相似度 列表异常！'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def cf_query_user_favor(sql, userId):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        res = []
+        cur.execute(sql, userId)
+        res = cur.fetchall()
+        db.commit()
+        return 0, res
+    except Exception as e:
+        print('query hot list Erorr ===== ', e)
+        return 1, 'cf 查找用户的喜爱列表前几个！'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def cf_query_similar(sql, list):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        res = []
+        ress = []
+        for i in list:
+            cur.execute(sql, i[0])
+            res = cur.fetchall()
+            for j in res:
+                tmp = {
+                    'bookId': j[1],
+                    'similar': j[2] * i[1],  # 算法的一部分，乘以评分矩阵
+                    'reasonBookId': j[0],
+                    'method': 'cf'
+                }
+                ress.append(tmp)
+            db.commit()
+        return 0, ress
+    except Exception as e:
+        print('query hot list Erorr ===== ', e)
+        return 1, 'cf 查找相似度！'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def cf_query_similar_msg(sql, sql_reason, list):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        for i in list:
+            cur.execute(sql, i['bookId'])
+            res1 = cur.fetchone()
+            i['bookName'] = res1[1]
+            i['author'] = res1[2]
+            i['imgUrl'] = res1[3]
+            i['subjectUrl'] = res1[4]
+            cur.execute(sql_reason, i['reasonBookId'])
+            res2 = cur.fetchone()
+            i['reason'] = '喜欢《' + res2[0] + '》的人也喜欢此书。（BY item-CF）'
+            # print(i)
+        db.commit()
+        return 0, list
+    except Exception as e:
+        print('Erorr ===== ', e)
+        return 1, 'cf 查找书本详细信息异常！'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def contRec_query(sql, list):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        result = []
+        for i in list:
+            cur.execute(sql, i[0])
+            res = cur.fetchall()
+            ress = []
+            cur.execute('SELECT bookName FROM br_books WHERE bookId=%s', i[0])
+            book_name = cur.fetchone()[0]
+            for j in res:
+                cur.execute('SELECT bookId,bookName,author,imgUrl,subjectUrl FROM br_books WHERE bookId=%s', j[0])
+                rec_book_msg = cur.fetchone()
+                tmp = {
+                    'bookId': j[0],
+                    'bookName': rec_book_msg[1],
+                    'author': rec_book_msg[2],
+                    'imgUrl': rec_book_msg[3],
+                    'subjectUrl': rec_book_msg[4],
+                    'reasonBookId': i[0],
+                    'reason': '此书与你喜欢的《' + book_name + "》内容相似。（BY CB）",
+                    'sameTagsNum': j[1],
+                }
+                ress.append(tmp)
+            # 只取前4
+            if len(ress)<5:
+                result += ress
+            else:
+                result += random.sample(ress, 4)
+        db.commit()
+        return 0, result
+    except Exception as e:
+        print('content rec query Erorr ===== ', e)
+        return 1, 'content 查找书本异常！'
     finally:
         if db != '':
             db.close()  # 关闭连接
