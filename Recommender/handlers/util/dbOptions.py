@@ -2,10 +2,14 @@ import random
 
 import pymysql
 
-'''模糊查询 书籍列表'''
-
 
 def search(sql, params):
+    """
+    模糊查询 书籍列表 api
+    :param sql: 
+    :param params: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -41,10 +45,13 @@ def search(sql, params):
             db.close()  # 关闭连接
 
 
-'''模糊查询 书籍 总页数'''
-
-
 def search_count(sql, params):
+    """
+    模糊查询 书籍总数 api
+    :param sql: 
+    :param params: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -66,10 +73,13 @@ def search_count(sql, params):
             db.close()  # 关闭连接
 
 
-'''注册'''
-
-
 def register_insert(sql, params):
+    """
+    注册 api
+    :param sql: 
+    :param params: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -86,10 +96,13 @@ def register_insert(sql, params):
             db.close()  # 关闭连接
 
 
-'''登录'''
-
-
 def login_query(sql, param):
+    """
+    登录 api
+    :param sql: 
+    :param param: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -99,24 +112,27 @@ def login_query(sql, param):
         res = cur.fetchall()
         db.commit()
         if len(res) == 1:
-            print(res)
+            # print(res)
             return 0, res[0]
         elif len(res) == 0:
-            return 1, '没有查找到对应用户!'
+            return 1, '没有查找到对应用户！请您登陆注册！'
         else:
             return 2, '系统错误，多个用户同账号！'
     except Exception as e:
         print('register  Erorr ===== ', e)
-        return 3, '登录操作错误!'
+        return 3, '登录操作错误！'
     finally:
         if db != '':
             db.close()  # 关闭连接
 
 
-'''favor insert'''
-
-
 def favor_insert(sql, params):
+    """
+    喜爱列表增加item api
+    :param sql: 
+    :param params: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -133,10 +149,13 @@ def favor_insert(sql, params):
             db.close()  # 关闭连接
 
 
-'''favor delete'''
-
-
 def favor_delete(sql, params):
+    """
+    喜爱列表 移除item api
+    :param sql: 
+    :param params: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -153,13 +172,13 @@ def favor_delete(sql, params):
             db.close()  # 关闭连接
 
 
-'''favor_query'''
-
-
-# 返回的是包装好的数据对象
-
-
 def favor_query(sql, params):
+    """
+    喜爱列表 某用户查询 按星数返回 api
+    :param sql: 
+    :param params: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -218,10 +237,13 @@ def favor_query(sql, params):
             db.close()  # 关闭连接
 
 
-''' favor query list  返回的是列表'''
-
-
 def favor_list_query(sql, userId):
+    """
+    favor query list  返回的是列表、元组嵌套
+    :param sql: 
+    :param userId: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -238,10 +260,14 @@ def favor_list_query(sql, userId):
             db.close()  # 关闭连接
 
 
-'''书本信息查询 详细'''
-
-
 def detail_query(sql, sql_tags, bookId):
+    """
+    书本详细信息查询 api
+    :param sql: 
+    :param sql_tags: 
+    :param bookId: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -290,10 +316,15 @@ def detail_query(sql, sql_tags, bookId):
             db.close()  # 关闭连接
 
 
-'''查询 某用户 对 某书的评分   可能没有评分'''
-
-
 def star_query(sql, userId, bookId):
+    """
+    查询某用户对某书的评分 api
+    可能没有评分
+    :param sql: 
+    :param userId: 
+    :param bookId: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -329,10 +360,14 @@ def star_query(sql, userId, bookId):
             db.close()  # 关闭连接
 
 
-'''标签查询'''
-
 
 def tag_query(sql, bookId):
+    """
+    标签查询
+    :param sql: 
+    :param bookId: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -357,8 +392,13 @@ def tag_query(sql, bookId):
             db.close()  # 关闭连接
 
 
-# 查询全部喜爱列表
+
 def favor_all_query(sql):
+    """
+    查询全部喜爱列表
+    :param sql: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -376,6 +416,12 @@ def favor_all_query(sql):
 
 
 def cf_rec_query(sql, dic):
+    """
+    cf 查询该用户的评价，做成dict伪矩阵
+    :param sql: 
+    :param dic: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -414,6 +460,11 @@ def cf_rec_query(sql, dic):
 
 
 def hot_query(sql):
+    """
+    查询热门书籍
+    :param sql: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -443,11 +494,11 @@ def hot_query(sql):
 
 
 def cf_insert_update(list):
-    '''
-    INSERT INTO item_cf_similar(bookId1, bookId2, similar) VALUES(%s,%s,%s) ON DUPLICATE KEY UPDATE bookId1=%s,bookId2=%s;
+    """
+    定时任务 计算得到新的 item-cf相似度时，插入
     :param list: 
     :return: 
-    '''
+    """
     sql = 'INSERT INTO item_cf_similar(bookId1, bookId2, similar) VALUES(%s,%s,%s) ON DUPLICATE KEY UPDATE bookId1=%s,bookId2=%s,similar=%s'
     try:
         db = ''
@@ -467,6 +518,12 @@ def cf_insert_update(list):
 
 
 def cf_query_user_favor(sql, userId):
+    """
+    查找用户的喜爱列表前几个
+    :param sql: 
+    :param userId: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -486,6 +543,12 @@ def cf_query_user_favor(sql, userId):
 
 
 def cf_query_similar(sql, list):
+    """
+    cf 查询 item-cf 相似度表
+    :param sql: 
+    :param list: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -515,6 +578,13 @@ def cf_query_similar(sql, list):
 
 
 def cf_query_similar_msg(sql, sql_reason, list):
+    """
+    cf 查询得到相似度的bookId后继续查找book其余信息
+    :param sql: 
+    :param sql_reason: 
+    :param list: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -542,6 +612,12 @@ def cf_query_similar_msg(sql, sql_reason, list):
 
 
 def contRec_query(sql, list):
+    """
+    基于内容推荐 查询与用户喜欢列表random出的几项有较多相同标签的书籍
+    :param sql: 
+    :param list: 
+    :return: 
+    """
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
@@ -578,6 +654,99 @@ def contRec_query(sql, list):
     except Exception as e:
         print('content rec query Erorr ===== ', e)
         return 1, 'content 查找书本异常！'
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def token_delete(sql, userId):
+    """
+    token删除、清除
+    :param sql: 
+    :param userId: 
+    :return: 
+    """
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, userId)
+        # res = cur.fetchall()
+        db.commit()
+        return 0
+    except Exception as e:
+        print('token_delete Erorr ===== ', e)
+        return 1
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def token_delete_token(sql, token):
+    """
+    token删除、清除
+    :param sql: 
+    :param userId: 
+    :return: 
+    """
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, token)
+        # res = cur.fetchall()
+        db.commit()
+        return 0
+    except Exception as e:
+        print('token_delete Erorr ===== ', e)
+        return 1
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def token_add(sql, token, userId, endTime):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, (token, userId, endTime))
+        # res = cur.fetchall()
+        db.commit()
+        return 0
+    except Exception as e:
+        print('token_add Erorr ===== ', e)
+        return 1
+    finally:
+        if db != '':
+            db.close()  # 关闭连接
+
+
+def token_query(sql, token):
+    try:
+        db = ''
+        db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
+                             charset="utf8")
+        cur = db.cursor()  # 获取操作游标
+        cur.execute(sql, token)
+        res = cur.fetchall()
+        db.commit()
+        # token,my_token.userId,endTime,nickname
+        if len(res) == 1:
+            tmp = {
+                'userId': res[0][1],
+                'endTime': int(res[0][2]),
+                'nickName': res[0][3],
+            }
+            return 0, tmp
+        else:
+            return 1, ''
+    except Exception as e:
+        print('token query error ===== ', e)
+        return 1, ''
     finally:
         if db != '':
             db.close()  # 关闭连接

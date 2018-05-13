@@ -235,7 +235,7 @@
     data () {
       return {
         baseUrl: 'http://127.0.0.1:8000/recommend/',
-        userId: '13411977340',
+        userId: '',
         hadLogin: false,
         value4: "5",
         showSearchResult: false,
@@ -275,12 +275,12 @@
         this.resultTitle = '搜索结果';
         this.itemCount = 0;
         // hot books api
+        console.log('content mounted userId = '+ this.userId);
         this.handleHotBooks()
-
         this.getValueFromTopBar()  // 获取userId 从TopBar
         // 标签推荐、 书籍推荐接口
-        this.handleRecommendTags()
-        this.handleRecommendBooks()
+        this.handleRecommendTags();
+        this.handleRecommendBooks();
       })
     },
     watch: {
@@ -303,19 +303,15 @@
         let _this = this;
         bus.$on("getUserId", function (userId) {
           _this.userId = userId;
+          _this.hadLogin = true;
         });
-        console.log('当前userId = ' + this.userId);
+        console.log('getValueFromTopBar userId = '+ this.userId);
       },
       searchHandle(pageno){
         this.curPage = pageno;
         if (this.searchInput === '') {
           this.$message.error('请输入搜索内容！')
         } else {
-          // 显示模块
-          this.showSearchResult = true;
-          this.showInitHot = false;
-          this.resultTitle = '搜索结果';
-
           let wd = encodeURIComponent(this.searchInput);
           let url = this.baseUrl + 'book/search?wd=' + wd + '&pageno=' + pageno;
 
@@ -343,6 +339,17 @@
               _this.$message.error('搜索异常！请重搜！')
               _this.fullscreenLoading = false;
             });
+
+          if (this.showInitHot === true) { // 如果是从初始页转过来的就进行推荐的接口
+            // 标签推荐、 书籍推荐接口
+            this.handleRecommendTags();
+            this.handleRecommendBooks();
+          }
+          // 显示模块
+          this.showSearchResult = true;
+          this.showInitHot = false;
+          this.resultTitle = '搜索结果';
+
         }
       },
       handleCurrentChange(currentPage) {  // 翻页跳转
@@ -351,9 +358,10 @@
         } else {
           this.handleTagSearch(currentPage);
         }
-
       },
       handleCollect(item) {
+        this.getValueFromTopBar()
+        console.log('收藏userId = '+ this.userId)
         if (this.userId === '' || this.userId === null) {
           this.$message.warning('请先注册/登录系统！')
         } else {
@@ -482,8 +490,8 @@
             .then((response) => {
               let res = response.data;
               if (res['error_code'] === 0) {
-                console.log('标签 --------------- ')
-                console.log(res['data']);
+//                console.log('标签 --------------- ')
+//                console.log(res['data']);
                 _this.tags = res['data'];
               } else {
                 _this.$message.error(res['msg']);
@@ -491,7 +499,7 @@
               _this.refreshTagBtnLoad = false;
             })
             .catch(function (err) {
-              console.log('tags rec error === ' + err);
+//              console.log('tags rec error === ' + err);
               _this.$message.error('获取推荐标签操作异常！');
               _this.refreshTagBtnLoad = false;
             });
@@ -559,9 +567,9 @@
           )
             .then((response) => {
               let res = response.data;
-              console.log('书籍推荐 -------------- ');
+//              console.log('书籍推荐 -------------- ');
               if (res['error_code'] === 0) {
-                console.log(res['data']);
+//                console.log(res['data']);
                 _this.bookRec = res['data']['list'];
               } else {
                 _this.$message.error(res['msg']);
@@ -569,7 +577,7 @@
               _this.refreshBookBtnLoad = false;
             })
             .catch(function (err) {
-              console.log('tags rec error === ' + err);
+//              console.log('tags rec error === ' + err);
               _this.$message.error('获取推荐书籍操作异常！');
               _this.refreshBookBtnLoad = false;
             });
@@ -583,8 +591,8 @@
         this.$axios.get(url)
           .then((response) => {
             let res = response.data;
-            console.log('hot books response.data ====');
-            console.log(res);
+//            console.log('hot books response.data ====');
+//            console.log(res);
             if (res['error_code'] === 0) {
               _this.hotBooks = res['data']['list'];
 //              _this.$message.success(res['msg']);

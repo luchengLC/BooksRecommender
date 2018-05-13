@@ -9,10 +9,10 @@ from Recommender.handlers.util import dbOptions, package
 import operator
 from collections import OrderedDict
 import random
-# 定时任务 插件
-# from apscheduler.schedulers import
 import threading
-import time
+
+
+
 
 ''' 
     TO DO
@@ -189,6 +189,7 @@ def dealItemCFRecommend():
     item cf 定时处理
     :return: 
     """
+    # print('==================== 现在正在执行 ==================')
     sql = 'SELECT userId, bookId, starNum FROM favor'
     result_code, result = dbOptions.favor_all_query(sql)
 
@@ -355,10 +356,10 @@ class cfThread(threading.Thread):
         self.result = []
 
     def run(self):
-        print("开始线程：" + self.threadName)
+        # print("开始线程：" + self.threadName)
         # 返回cfRecommend的处理结果
         self.result = cfRecommend(self.userId, self.favor_list)
-        print("退出线程：" + self.threadName)
+        # print("退出线程：" + self.threadName)
 
     def get_result(self):
         return self.result
@@ -377,10 +378,10 @@ class contentThread(threading.Thread):
         self.result = []
 
     def run(self):
-        print("开始线程：" + self.threadName)
+        # print("开始线程：" + self.threadName)
         # 返回contentRecommend的处理结果
         self.result = contentRecommend(self.userId, self.favor_list)
-        print("退出线程：" + self.threadName)
+        # print("退出线程：" + self.threadName)
 
     def get_result(self):
         return self.result

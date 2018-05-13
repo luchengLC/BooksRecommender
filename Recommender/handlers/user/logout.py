@@ -7,25 +7,29 @@ import json
 import math
 from Recommender.handlers.util import dbOptions, package
 
-'''退出'''
 
-
-# @require_http_methods(["GET"])
+@require_http_methods(["POST"])
 def handle_logout(request):
+    """
+    '''退出'''
+    :param request: 
+    :return: 
+    """
     try:
-        if request.session.get('nickname', None):
-            request.session.flush()
+        token = request.POST.get('token')
+        print(token)
+        del_sql = 'DELETE FROM my_token WHERE token = %s'
+        code = dbOptions.token_delete_token(del_sql, token)
+
+        if code == 0:
             data = {
-                'nickname': '游客',
-                'state': '成功退出'
+                'nickName': '游客',
+                'state': '成功退出',
+                'userId': '',
             }
             return JsonResponse(package.successPack(data))
         else:
-            request.session.flush()
-            data = {
-                'nickname': '游客',
-                'state': '未登录'
-            }
-            return JsonResponse(package.successPack(data))
+            return JsonResponse(package.errorPack('token移除异常！'))
     except Exception as e:
-        return  JsonResponse(package.errorPack('退出异常！'))
+        print(e)
+        return JsonResponse(package.errorPack('退出异常！'))

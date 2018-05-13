@@ -7,6 +7,11 @@ import json
 import math
 from Recommender.handlers.util import dbOptions, package
 
+# from rest_framework.authtoken.models import Token
+# from django.contrib.auth.models import User
+# from rest_framework import permissions
+from Recommender.handlers.user.login import create_token
+
 '''注册'''
 @require_http_methods(["POST"])
 def handle_register(request):
@@ -14,7 +19,7 @@ def handle_register(request):
     password = request.POST.get('password')
     nickname = request.POST.get('nickname')
     email = request.POST.get('email')
-    print(userId, ' ', password , ' ', nickname, ' ', email)
+    startTime = int(request.POST.get('startTime'))  # 前端传来的时间戳:10位int
     msg = {
         'userId': userId,
         'password': password,
@@ -29,14 +34,17 @@ def handle_register(request):
     result_code, result = dbOptions.register_insert(sql, msg)
 
     if result_code == 0:
-        # session 设置
-        request.session['nickname'] = nickname
-        request.session['userId'] = userId
-        # session data: 2 days
-        request.session.set_expiry(60 * 60 * 24 * 2)
-        data = {
-            'nickname': result
-        }
-        return JsonResponse(package.successPack(data))
+        # 生成token并存好
+        token_code, token, endTime = create_token(userId, startTime)
+        if token_code == 0:
+            data = {
+                'nickName': result,
+                'token': token,
+                'endTime': endTime,
+                'userId': userId
+            }
+            return JsonResponse(package.successPack(data))
+        else:
+            return JsonResponse(package.errorPack('生成token失败！请重试！'))
     else:
         return JsonResponse(package.errorPack('注册失败，您的手机号码可能已被注册，请重试！'))
