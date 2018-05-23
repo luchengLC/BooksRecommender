@@ -16,12 +16,13 @@ Including another URLconf
 from django.conf.urls import url
 from Recommender.handlers.user import register, logout, login, home, info
 from Recommender.handlers.book import search,detail,hot
-from Recommender.handlers.userAndBook import favor, recommend
+from Recommender.handlers.userAndBook import favor, recommendBooks
+from Recommender.handlers.userAndBook import favor, recommendTags
 
 # 定时任务 插件
 from apscheduler.schedulers.background  import BackgroundScheduler
 from datetime import datetime
-from Recommender.handlers.userAndBook.recommend import dealItemCFRecommend
+from Recommender.handlers.userAndBook.recommendBooks import dealItemCFRecommend
 import time
 import os
 
@@ -55,14 +56,14 @@ urlpatterns = [
 
 
     # 推荐
-    url(r'rec/tags', recommend.handle_recommend_tags),
-    url(r'rec/tag/search', recommend.handle_recommend_tags_search),
-    url(r'rec/books', recommend.handle_recommend_books),
+    url(r'rec/tags', recommendTags.handle_recommend_tags),
+    url(r'rec/tag/search', recommendTags.handle_recommend_tags_search),
+    url(r'rec/books', recommendBooks.handle_recommend_books),
 
 ]
 
 
-# 异步定时任务， 每天执行一次
+# 异步定时任务， 每10min执行一次
 scheduler = BackgroundScheduler()
-scheduler.add_job(dealItemCFRecommend, 'interval', days=1)
+scheduler.add_job(dealItemCFRecommend, 'interval', minutes=10, max_instances=10,)
 scheduler.start()

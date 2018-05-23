@@ -404,7 +404,7 @@
       .title {
         font-size: 20px;
         font-weight: bold;
-        color: #F56C6C;
+        color: #37A;
       }
       .refresh-btn {
         margin-right: 10px;

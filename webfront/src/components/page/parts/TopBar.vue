@@ -6,7 +6,7 @@
       background-color="#545c64"
       text-color="#ffffff"
       active-text-color="#409EFF">
-      <el-button class="menu-btn" type="text" id="sysName" @click="loaderMain">图书推荐系统</el-button>
+      <el-button class="menu-btn" type="text" id="sysName" @click="loaderMain">书籍推荐系统</el-button>
       <el-button class="menu-btn" type="text" id="favor" @click="loaderFavor">{{ btnFavor }}</el-button>
 
       <el-button class="menu-btn" type="text" id="register" @click="dialogRegisterVisible=true" v-if="hadLogin===false">
@@ -438,14 +438,14 @@
   .el-menu {
     text-align: left;
     .menu-btn {
-      height: 30px;
+      height: 50px;
       line-height: 0;
       margin: 0 20px 0 5px;
-      color: #ffd04b;
-      font-size: 16px;
+      /*color: #ffd04b;*/
+      font-size: 20px;
 
       &:hover {
-        color: #409EFF;;
+        /*color: #409EFF;;*/
       }
     }
 

@@ -8,7 +8,7 @@
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b" >
-      <el-menu-item class="el-menu-item" index="1">图书推荐系统</el-menu-item>
+      <el-menu-item class="el-menu-item" index="1">书籍推荐系统</el-menu-item>
       <el-menu-item class="el-menu-item" index="2">主页</el-menu-item>
       <el-menu-item class="el-menu-item" index="3">HOT</el-menu-item>
       <el-menu-item class="el-menu-item" index="4">我喜爱列表</el-menu-item>

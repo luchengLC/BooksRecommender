@@ -1,4 +1,5 @@
 import random
+from datetime import time, datetime
 
 import pymysql
 
@@ -499,14 +500,17 @@ def cf_insert_update(list):
     :param list: 
     :return: 
     """
-    sql = 'INSERT INTO item_cf_similar(bookId1, bookId2, similar) VALUES(%s,%s,%s) ON DUPLICATE KEY UPDATE bookId1=%s,bookId2=%s,similar=%s'
+    sql = 'INSERT INTO item_cf_similar(bookId1, bookId2, similar,updateTime) VALUES(%s,%s,%s,%s) ON DUPLICATE KEY UPDATE bookId1=%s,bookId2=%s,similar=%s'
+    now =  datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print('now == ', now)
     try:
         db = ''
         db = pymysql.connect(host="127.0.0.1", user="root", password="123456", db="recommender", port=3306,
                              charset="utf8")
         cur = db.cursor()  # 获取操作游标
+        print('here=============')
         for i in list:
-            cur.execute(sql, (i['bookId1'], i['bookId2'], i['similar'], i['bookId1'], i['bookId2'], i['similar']))
+            cur.execute(sql, (i['bookId1'], i['bookId2'], i['similar'], now, i['bookId1'], i['bookId2'], i['similar']))
             db.commit()
         return 0, 'success'
     except Exception as e:

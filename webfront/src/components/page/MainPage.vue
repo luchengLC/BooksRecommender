@@ -63,7 +63,7 @@ export default {
         flex-direction: row; /* 方向 横   左到右*/
         flex-wrap: nowrap;  /* 不许换行 */
         justify-content: center;
-        width: 80%;
+        width: 85%;
         .midContent {
           display: -webkit-flex; /* Safari  chrome */
           display: flex;

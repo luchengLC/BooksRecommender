@@ -31,6 +31,9 @@
             <el-button class="collect" type="primary" plain size="medium" @click="handleCollect(item)">
               收藏
             </el-button>
+            <el-button class="collect" type="primary" plain size="medium">
+              相似
+            </el-button>
           </div>
         </li>
       </ul>
@@ -49,6 +52,9 @@
               <a target="_blank" class="aname" :href="item.subjectUrl">{{item.bookName}}</a>
               <el-button class="collect" type="primary" plain size="medium" @click="handleCollect(item)">
                 收藏
+              </el-button>
+              <el-button class="collect" type="primary" plain size="medium">
+                相似
               </el-button>
               <!--<span>我的评分：<span style="color: #ff994b">4 stars</span>/5 stars</span>-->
             </h2>
@@ -85,8 +91,27 @@
 
     <!--右侧-->
     <div class="hotContent" v-if="showSearchResult">
+
+
+
       <div style="margin: 50px 0 0 0; padding: 0">
         <!--标签推荐-->
+        <h3 class="right-page-title">
+          <span class="title">
+            <i class="el-icon-menu"></i>
+            标签搜索
+          </span>
+
+        </h3>
+        <!--搜索框-->
+        <div class="div-tag-input">
+          <el-input class="search-tag-input" placeholder="标签搜索..." size="small" v-model="searchTag"
+                    @keyup.enter.native="handleTagSearch(1)"></el-input>
+          <el-button class="search-btn" slot="append" icon="el-icon-search" size="small" @click="handleTagSearch(1)"
+                     v-loading.fullscreen.lock="fullscreenLoading"></el-button>
+        </div>
+        <!--<el-button type="text" style="margin: 0; padding: 0"></el-button>-->
+
         <h3 class="right-page-title">
           <span class="title">
             <i class="el-icon-menu"></i>
@@ -96,12 +121,12 @@
             刷新
           </el-button>
 
-          <!--<el-button type="text" class="refresh-btn" :loading="chooceMany" style="margin: 0 5px;">-->
-          <!--多选-->
-          <!--</el-button>-->
+          <el-button type="text" class="refresh-btn" :loading="chooceMany" style="margin: 0 5px;">
+            复选
+          </el-button>
 
         </h3>
-        <!--<el-button type="text" style="margin: 0; padding: 0"></el-button>-->
+
         <div class="tags">
           <p style="color: rgb(84, 92, 100);" v-if="hadLogin===false"><i class="el-icon-warning"></i> 登录后才能为您推荐！</p>
           <el-button class="tag-btn" type="text" v-for="(i, index2) in tags"
@@ -143,6 +168,9 @@
               <el-button class="collect" type="primary" plain size="medium" @click="handleCollect(item)">
                 收藏
               </el-button>
+              <el-button class="collect" type="primary" plain size="medium">
+                相似
+              </el-button>
             </div>
           </li>
         </ul>
@@ -173,6 +201,9 @@
               </div>
               <el-button class="collect" type="primary" plain size="medium" @click="handleCollect(item)">
                 收藏
+              </el-button>
+              <el-button class="collect" type="primary" plain size="medium">
+                相似
               </el-button>
             </div>
           </li>
@@ -275,7 +306,7 @@
         this.resultTitle = '搜索结果';
         this.itemCount = 0;
         // hot books api
-        console.log('content mounted userId = '+ this.userId);
+        console.log('content mounted userId = ' + this.userId);
         this.handleHotBooks()
         this.getValueFromTopBar()  // 获取userId 从TopBar
         // 标签推荐、 书籍推荐接口
@@ -305,7 +336,7 @@
           _this.userId = userId;
           _this.hadLogin = true;
         });
-        console.log('getValueFromTopBar userId = '+ this.userId);
+        console.log('getValueFromTopBar userId = ' + this.userId);
       },
       searchHandle(pageno){
         this.curPage = pageno;
@@ -361,7 +392,7 @@
       },
       handleCollect(item) {
         this.getValueFromTopBar()
-        console.log('收藏userId = '+ this.userId)
+        console.log('收藏userId = ' + this.userId)
         if (this.userId === '' || this.userId === null) {
           this.$message.warning('请先注册/登录系统！')
         } else {
@@ -618,7 +649,7 @@
   .mainContent {
     display: -webkit-flex; /* Safari  chrome */
     display: flex;
-    flex: 5;
+    flex: 9;
     flex-direction: column; /* 方向 树   上到下*/
     width: 100%;
 
@@ -642,7 +673,8 @@
     .page-title {
       font-size: 20px;
       font-weight: bold;
-      color: #F56C6C;
+      /*color: #37A;*/
+      color: #0c6ab1;
       text-align: left;
       padding-top: 5px;
       border-top: 1px solid #ddd;
@@ -701,8 +733,9 @@
             text-overflow: ellipsis;
           }
           .collect {
+            margin-right: 2px;
             padding: 1px 4px 1px 4px;
-            color: #ff994b;
+            color: #409EFF;
             float: right;
           }
         }
@@ -745,11 +778,12 @@
             .aname {
               color: #3377aa;
               text-decoration: none;
+              margin-right: 45px;
             }
             .collect {
               padding: 1px 4px 1px 4px;
-              margin-left: 30px;
-              color: #ff994b;
+              margin-left: 2px;
+              color: #37A;
             }
           }
           .publi {
@@ -812,7 +846,7 @@
   }
 
   .hotContent {
-    flex: 2;
+    flex: 4;
     max-width: 500px;
     min-width: 130px;
     /*display: none;*/
@@ -834,7 +868,7 @@
       .title {
         font-size: 20px;
         font-weight: bold;
-        color: #F56C6C;
+        color: #0c6ab1;
       }
       .refresh-btn {
         float: right;
@@ -842,6 +876,19 @@
         &:hover {
           text-decoration: underline;
         }
+      }
+    }
+    .div-tag-input {
+      margin: 5px 0 10px 20px;
+      width: 80%;
+      display: -webkit-flex; /* Safari  chrome */
+      display: flex;
+      flex-direction: row;
+      .search-input {
+        width: 20%;
+      }
+      .search-btn {
+        width: 15%;
       }
     }
 
@@ -910,9 +957,9 @@
             text-overflow: ellipsis;
           }
           .collect {
-            padding: 1px 4px 1px 4px;
-            color: #ff994b;
-            float: right;
+            padding: 1px 2px 1px 2px;
+            color: #37A;
+            margin: 0;
           }
         }
       }
@@ -920,7 +967,7 @@
   }
 
   .cbName {
-    color: #F56C6C;;
+    color: #37A;;
   }
 
   .rate {
